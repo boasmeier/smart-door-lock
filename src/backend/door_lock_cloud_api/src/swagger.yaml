@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  description: Door Lock Cloud API
+  version: 1.0.0
+  title: Swagger REST API
+paths:
+  /doorlocks:
+    get:
+      operationId: "api.doorlocks.get_all"
+      tags:
+        - "Door Locks"
+      summary: "All the available door locks"
+      description: "Get the list of available door locks and its status."
+      responses:
+        "200":
+          description: "Successful get doorlocks operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  properties:
+                    lockId:
+                      type: integer
+                    doorState:
+                      type: string
+                    lockState:
+                      type: string
+
+servers:
+  - url: /
