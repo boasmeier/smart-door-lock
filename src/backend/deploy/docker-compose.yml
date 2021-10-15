@@ -5,3 +5,23 @@ services:
         ports:
         - "5001:5001"
         restart: always
+
+    mqtt-broker:
+        build: ../mqtt_broker/
+        ports:
+            - "1883:1883"
+            - "9001:9001"
+            - "18083:18083"
+            - "4369:4369"
+        volumes:
+            - vol-emqx-data:/opt/emqx/data
+            - vol-emqx-etc:/opt/emqx/etc
+            - vol-emqx-log:/opt/emqx/log
+
+volumes:
+  vol-emqx-data:
+    name: foo-emqx-data
+  vol-emqx-etc:
+    name: foo-emqx-etc
+  vol-emqx-log:
+    name: foo-emqx-log
