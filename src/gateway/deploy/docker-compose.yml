@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+    mqtt-broker-2:
+        container_name: deploy-mqtt-gateway-broker-1
+        build: ../mqtt_gateway_broker/
+        ports:
+            - "1884:1883"
+            - "9002:9001"
+            - "18084:18083"
+            - "4370:4369"
+        volumes:
+          - vol-emqx-data:/opt/emqx/data
+          - vol-emqx-etc:/opt/emqx/etc
+          - vol-emqx-log:/opt/emqx/log
+
+volumes:
+  vol-emqx-data:
+    name: bar-emqx-data
+  vol-emqx-etc:
+    name: bar-emqx-etc
+  vol-emqx-log:
+    name: bar-emqx-log
