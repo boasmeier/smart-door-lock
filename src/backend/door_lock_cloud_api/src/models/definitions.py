@@ -1,4 +1,8 @@
 DOOR_STATE = "doorState"
 LOCK_STATE = "lockState"
+DOOR_LOCKS = "doorlocks"
+STATE = "state"
 SITEID = "siteId"
 DEVICEID = "deviceId"
+LOCK = "lock"
+DOOR = "door"
