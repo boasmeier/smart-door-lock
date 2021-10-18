@@ -15,6 +15,16 @@ class MqttClient():
         pass
 
 
+def on_connect(client, userdata, flags, rc):
+    logging.info("on_connect")
+    client.subscribe("hallo_test")
+    logging.info("Connected with result code "+str(rc))
+    client.publish("hallo_test", payload="Hallo test")
+
+def on_message(client, userdata, msg):
+    logging.info("GOt merssage")
+    logging.info(f"message: {msg}")
+
 class PahoClient(MqttClient):
     def __init__(self, address: str, port: int):
         logging.info("Before connecting")
@@ -26,23 +36,10 @@ class PahoClient(MqttClient):
         self.callbacks = []
         self._client = mqtt.Client()
 
-        self._client.on_connect = self._on_connect
-        self._client.on_message = self._on_message
+        self._client.on_connect = on_connect
+        self._client.on_message = on_message
+        self._client.loop_start()
         self._client.connect(address, port, 60)
 
     def register_callback(self, callback):
         self.callbacks.append(callback)
-
-    # The callback for when the client receives a CONNACK response from the server.
-    def _on_connect(self, client, userdata, flags, rc):
-        logging.info("_on_connect")
-
-        print("Connected with result code "+str(rc))
-        # Subscribing in on_connect() means that if we lose the connection and
-        # reconnect then subscriptions will be renewed.
-        client.subscribe("$SYS/#")
-
-    # The callback for when a PUBLISH message is received from the server.
-    def _on_message(self, client, userdata, msg):
-        logging.info("_on_message")
-        print(msg.topic+" "+str(msg.payload))
