@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Dict
 import models.definitions as definitions
+import logging
 
 class DoorState(Enum):
     open = 0
@@ -21,7 +22,7 @@ class DoorLock():
         self.site_id = 0
 
     def to_json(self) -> Dict:
-        return {definitions.DOOR_STATE: self.door_state.name, definitions.LOCK_STATE: self.lock_state.name, definitions.DEVICEID : self.deviceId}
+        return {definitions.DOOR_STATE: self.door_state.name, definitions.LOCK_STATE: self.lock_state.name, definitions.DEVICEID : self.device_id}
 
     @classmethod
     def from_json(json: Dict, siteId: str, deviceId: str):
@@ -29,11 +30,11 @@ class DoorLock():
         Returns the DoorLock Object from json or None otherwise.
         """
         try:
-            device_id = device_id
-            site_id = site_id
+            device_id = deviceId
+            site_id = siteId
             door_state = DoorState(json[definitions.DOOR_STATE])    
             lock_state = LockState(json[definitions.LOCK_STATE]) 
-            return DoorLock(device_id, site_idm, door_state, lock_state)   
+            return DoorLock(device_id, site_id, door_state, lock_state)   
 
         except:
             logging.error(f"DoorLock - Unable to parse {json}")
