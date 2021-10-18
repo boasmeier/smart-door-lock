@@ -2,9 +2,18 @@ from flask import Flask
 from flask_cors import CORS
 import connexion
 from waitress import serve
+from mqtt_client.client import MqttClient
+from mqtt_client.paho_client import PahoClient
+import logging
+import logging.config
+from os import path
+
+logging.config.fileConfig(path.join(path.dirname(path.abspath(__file__)), 'logger.conf'))
 
 # Create the application instance
 app = connexion.FlaskApp(__name__, specification_dir='./')
+mqtt_client: MqttClient = PahoClient("mqtt-broker", 1883)
+logging.info("Created PahoClient")
 
 # Add Swagger
 app.add_api('swagger.yaml')

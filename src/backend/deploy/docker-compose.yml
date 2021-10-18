@@ -5,6 +5,8 @@ services:
         ports:
         - "5001:5001"
         restart: always
+        depends_on:
+          - "mqtt-broker"
 
     mqtt-broker:
         build: ../mqtt_broker/
