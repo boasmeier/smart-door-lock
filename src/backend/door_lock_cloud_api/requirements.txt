@@ -18,6 +18,7 @@ MarkupSafe==1.1.1
 paho-mqtt
 python-jose==3.1.0
 PyYAML==5.3.1
+redis
 requests==2.23.0
 rsa==4.0
 six==1.14.0
