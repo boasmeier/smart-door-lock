@@ -1,6 +1,6 @@
 from telegram_bot import Bot
 
-bot = Bot()
+bot = Bot(1335464798)
 
 # Get name of bot
 bot.get_name()

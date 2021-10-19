@@ -2,7 +2,6 @@ import telegram
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
-DEFAULT_CHAT_ID = 1335464798  # Chat ID of the Creator of the iot-bot
 TOKEN = '2003633335:AAESPEbqsoAFSodzIHcox6SunazxMVzw1ps'
 
 DOOR = range(1)  # Increment number with each state
@@ -11,7 +10,9 @@ DOOR = range(1)  # Increment number with each state
 class Bot:
     _bot = telegram.Bot(token=TOKEN)
 
-    def __init__(self, chat_id=DEFAULT_CHAT_ID):
+    def __init__(self, chat_id: int = None):
+        if chat_id is None:
+            raise Exception("Chat-ID must be provided")
         self._chat_id = chat_id
         self.updater = Updater(token=TOKEN, use_context=True)
         dispatcher = self.updater.dispatcher
@@ -20,13 +21,14 @@ class Bot:
         start_handler = CommandHandler('start', self.start)
         dispatcher.add_handler(start_handler)
 
-        conv_handler = ConversationHandler(
+        door_handler = ConversationHandler(
             entry_points=[CommandHandler('open', self.open_door_check)],
+            allow_reentry=True,
             states={
                 DOOR: [MessageHandler(Filters.regex('^(Yes|No)$'), self.handle_door)]
             },
             fallbacks=[CommandHandler('cancel', self.cancel)])
-        self.updater.dispatcher.add_handler(conv_handler)
+        self.updater.dispatcher.add_handler(door_handler)
 
         # Start the bot
         self.updater.start_polling()
@@ -39,8 +41,6 @@ class Bot:
 
     def get_name(self, username=False) -> str:
         name = self._bot.get_me()
-        print("First name: " + name.first_name)
-        print("username: " + name.username)
         if username:
             return name.username
         else:
@@ -79,7 +79,7 @@ class Bot:
             'Are you sure to open the door?',
             reply_markup=ReplyKeyboardMarkup(reply_keyboard,
                                              one_time_keyboard=True,
-                                             input_field_placeholder='Yes or No?'))
+                                             input_field_placeholder='Open the door?'))
 
         return DOOR
 
