@@ -1,13 +1,38 @@
 import telegram
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
 DEFAULT_CHAT_ID = 1335464798  # Chat ID of the Creator of the iot-bot
+TOKEN = '2003633335:AAESPEbqsoAFSodzIHcox6SunazxMVzw1ps'
+
+DOOR = range(1)  # Increment number with each state
 
 
 class Bot:
-    _bot = telegram.Bot(token='2003633335:AAESPEbqsoAFSodzIHcox6SunazxMVzw1ps')
+    _bot = telegram.Bot(token=TOKEN)
 
     def __init__(self, chat_id=DEFAULT_CHAT_ID):
         self._chat_id = chat_id
+        self.updater = Updater(token=TOKEN, use_context=True)
+        dispatcher = self.updater.dispatcher
+
+        # Define Handlers
+        start_handler = CommandHandler('start', self.start)
+        dispatcher.add_handler(start_handler)
+
+        conv_handler = ConversationHandler(
+            entry_points=[CommandHandler('open', self.open_door_check)],
+            states={
+                DOOR: [MessageHandler(Filters.regex('^(Yes|No)$'), self.handle_door)]
+            },
+            fallbacks=[CommandHandler('cancel', self.cancel)])
+        self.updater.dispatcher.add_handler(conv_handler)
+
+        # Start the bot
+        self.updater.start_polling()
+
+    def __del__(self):
+        self.updater.stop()
 
     def set_chat_id(self, chat_id) -> None:
         self._chat_id = chat_id
@@ -36,3 +61,33 @@ class Bot:
             chat_id = self._chat_id
 
         self._bot.send_message(text=text, chat_id=chat_id)
+
+    # --- HANDLERS BELOW HERE --- #
+
+    def start(self, update, context):
+        context.bot.send_message(chat_id=update.effective_chat.id, text="I am already running")
+
+    def cancel(self, update, context: CallbackContext) -> int:
+        update.message.reply_text('Bye! I hope we can talk again some day.', reply_markup=ReplyKeyboardRemove())
+
+        return ConversationHandler.END
+
+    def open_door_check(self, update, context: CallbackContext) -> range:
+        reply_keyboard = [['Yes', 'No']]
+
+        update.message.reply_text(
+            'Are you sure to open the door?',
+            reply_markup=ReplyKeyboardMarkup(reply_keyboard,
+                                             one_time_keyboard=True,
+                                             input_field_placeholder='Yes or No?'))
+
+        return DOOR
+
+    def handle_door(self, update, context: CallbackContext):
+        if context.match.string == 'Yes':
+            print("Door opening")
+            update.message.reply_text("I'm opening the door now", reply_markup=ReplyKeyboardRemove())
+        elif context.match.string == 'No':
+            update.message.reply_text("Okay, I keep the door shut", reply_markup=ReplyKeyboardRemove())
+        else:
+            print("Something went wrong")
