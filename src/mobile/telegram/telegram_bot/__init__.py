@@ -18,16 +18,16 @@ class Bot:
         dispatcher = self.updater.dispatcher
 
         # Define Handlers
-        start_handler = CommandHandler('start', self.start)
+        start_handler = CommandHandler('start', self._start)
         dispatcher.add_handler(start_handler)
 
         door_handler = ConversationHandler(
-            entry_points=[CommandHandler('open', self.open_door_check)],
+            entry_points=[CommandHandler('open', self._open_door_check)],
             allow_reentry=True,
             states={
-                DOOR: [MessageHandler(Filters.regex('^(Yes|No)$'), self.handle_door)]
+                DOOR: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_door)]
             },
-            fallbacks=[CommandHandler('cancel', self.cancel)])
+            fallbacks=[CommandHandler('cancel', self._cancel)])
         self.updater.dispatcher.add_handler(door_handler)
 
         # Start the bot
@@ -64,15 +64,15 @@ class Bot:
 
     # --- HANDLERS BELOW HERE --- #
 
-    def start(self, update, context):
+    def _start(self, update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text="I am already running")
 
-    def cancel(self, update, context: CallbackContext) -> int:
+    def _cancel(self, update, context: CallbackContext) -> int:
         update.message.reply_text('Bye! I hope we can talk again some day.', reply_markup=ReplyKeyboardRemove())
 
         return ConversationHandler.END
 
-    def open_door_check(self, update, context: CallbackContext) -> range:
+    def _open_door_check(self, update, context: CallbackContext) -> range:
         reply_keyboard = [['Yes', 'No']]
 
         update.message.reply_text(
@@ -83,7 +83,7 @@ class Bot:
 
         return DOOR
 
-    def handle_door(self, update, context: CallbackContext):
+    def _handle_door(self, update, context: CallbackContext):
         if context.match.string == 'Yes':
             print("Door opening")
             update.message.reply_text("I'm opening the door now", reply_markup=ReplyKeyboardRemove())
