@@ -9,6 +9,7 @@ DOOR = range(1)  # Increment number with each state
 
 class Bot:
     _bot = telegram.Bot(token=TOKEN)
+    _observers = []
 
     def __init__(self, chat_id: int = None):
         if chat_id is None:
@@ -62,6 +63,16 @@ class Bot:
 
         self._bot.send_message(text=text, chat_id=chat_id)
 
+    def register(self, observer) -> None:
+        self._observers.append(observer)
+
+    def unregister(self, observer) -> None:
+        self._observers.remove(observer)
+
+    def notify(self) -> None:
+        for observer in self._observers:
+            observer.update()
+
     # --- HANDLERS BELOW HERE --- #
 
     def _start(self, update, context):
@@ -86,6 +97,7 @@ class Bot:
     def _handle_door(self, update, context: CallbackContext):
         if context.match.string == 'Yes':
             print("Door opening")
+            self.notify()
             update.message.reply_text("I'm opening the door now", reply_markup=ReplyKeyboardRemove())
         elif context.match.string == 'No':
             update.message.reply_text("Okay, I keep the door shut", reply_markup=ReplyKeyboardRemove())

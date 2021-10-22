@@ -1,12 +1,24 @@
 from telegram_bot import Bot
 
-bot = Bot(1335464798)
 
-# Get name of bot
-bot.get_name()
+class Main:
+    bot = Bot(1335464798)
 
-# Send Message to the latest chat-ID
-bot.send_message("Hello, I'm ready to start")
+    def start(self):
+        self.bot.register(self)
 
-while True:
-    pass
+        # Get name of bot
+        self.bot.get_name()
+
+        # Send Message to the latest chat-ID
+        self.bot.send_message("Hello, I'm ready to start")
+
+        while True:
+            pass
+
+    def update(self):
+        print("I got  called")
+
+
+main = Main()
+main.start()
