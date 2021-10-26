@@ -17,13 +17,13 @@ app = connexion.FlaskApp(__name__, specification_dir='./')
 
 # Add Swagger
 app.add_api('swagger.yaml')
-
 service = BackendService(site_ids = ["iotlab"])
+
 
 CORS(app.app)
 
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
     logging.info("Start Server...")
-    #serve(app, host='0.0.0.0', port=5001)
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    serve(app, host='0.0.0.0', port=5001)
+    #app.run(host='0.0.0.0', port=5001, debug=True)
