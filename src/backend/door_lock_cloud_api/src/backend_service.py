@@ -39,7 +39,11 @@ class BackendService():
         self.mqtt_client: MqttClient = PahoClient("mqtt-broker", 1883)
         self.site_ids: List[str] = site_ids
         self.state_updater: StateUpdater = StateUpdater(RedisDatabase("doorlock-database", 6379))
+        #TODO: Add Telegram Service here
+        self.register_callbacks()
 
-        for site_id in site_ids:
+    def register_callbacks(self):
+        for site_id in self.site_ids:
             self.mqtt_client.register_callback(tp.lock_state(site_id, "+"), self.state_updater.on_lockstate_updated)
             self.mqtt_client.register_callback(tp.door_state(site_id, "+"), self.state_updater.on_doorstate_updated)
+       

@@ -15,14 +15,17 @@ class DoorLock():
     """
     Represents a door lock with a unique deviceid, a lock and a door state.
     """
-    def __init__(self, device_id: int, door_state: DoorState, lock_state: LockState):
+    def __init__(self, device_id: int, site_id: str, door_state: DoorState, lock_state: LockState):
         self.device_id = device_id
         self.door_state = door_state
         self.lock_state = lock_state
-        self.site_id = 0
+        self.site_id = site_id
 
     def to_json(self) -> Dict:
         return {definitions.DOOR_STATE: self.door_state.name, definitions.LOCK_STATE: self.lock_state.name, definitions.DEVICEID : self.device_id}
+
+    def states_to_json(self) -> Dict:
+        return {definitions.DOOR_STATE: self.door_state.name, definitions.LOCK_STATE: self.lock_state.name}
 
     @classmethod
     def from_json(json: Dict, siteId: str, deviceId: str):

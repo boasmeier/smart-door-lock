@@ -14,6 +14,12 @@ class RedisDatabase(Database):
         self._port = port
         logging.info(f"RedisDatabase {host}:{port} starting")
         self._client = redis.Redis(host, port, 0)
+
+    def does_doorlock_exist(self, siteId: str, deviceId: str) -> bool:
+        """
+        Returns whether a doorlock exists or not. Will just return if in the database both door and lock state are present.
+        """
+        return len(self._client.keys((self._get_doorstate_key(siteId, deviceId)))) == 1 and len(self._client.keys((self._get_lockstate_key(siteId, deviceId)))) == 1
     
     def get_doorlocks(self) -> List[DoorLock]:
         """
@@ -25,13 +31,17 @@ class RedisDatabase(Database):
         """
         Returns all the doorlocks in the database with the passed siteId.
         """
-        pass
+        doorlocks: List[DoorLock] = []
+        for device_id in self._get_all_device_ids(siteId):
+            logging.info(f"Next deviceId: {device_id}")
+            doorlocks.append(self.get_doorlock(siteId, device_id))
+        return doorlocks
 
     def get_doorlock(self, siteId: str, deviceId: str) -> DoorLock:
         """
         Returns all the doorlock in the database with the passed siteId and deviceId.
         """
-        pass
+        return DoorLock(deviceId, siteId, DoorState[json.loads(self._client.get(self._get_doorstate_key(siteId, deviceId)))[definitions.DOOR_STATE]], LockState[json.loads(self._client.get(self._get_lockstate_key(siteId, deviceId)))[definitions.LOCK_STATE]])
 
     def set_doorstate(self, siteId: str, deviceId: str, doorState: DoorState):
         """
@@ -57,4 +67,12 @@ class RedisDatabase(Database):
     def _get_doorstate_key(self, siteId: str, deviceId: str):
         return self._base_key(siteId, deviceId) + RedisDatabase.delimiter + definitions.STATE + RedisDatabase.delimiter + definitions.DOOR
 
+    def _get_all_device_ids(self, siteId: str) -> List[str]:
+        return set.union(set([self._parse_device_id(str(key)) for key in self._client.keys((self._get_lockstate_key(siteId, "*")))]) , set([self._parse_device_id(str(key)) for key in self._client.keys((self._get_doorstate_key(siteId, "*")))]))
+
+    def _parse_device_id(self, key: str) -> str:
+        logging.info(f"key: {key}")
+        logging.info(f"split: {key.split(RedisDatabase.delimiter)}")
+
+        return key.split(RedisDatabase.delimiter)[2]
     

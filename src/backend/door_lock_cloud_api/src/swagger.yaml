@@ -4,13 +4,20 @@ info:
   version: 1.0.0
   title: Swagger REST API
 paths:
-  /doorlocks:
+  /doorlocks/{site_id}:
     get:
-      operationId: "api.doorlocks.get_all"
+      operationId: "api.doorlocks.get_all_from_site"
       tags:
-        - "Door Locks"
+        - "Door Locks Site"
       summary: "All the available door locks"
       description: "Get the list of available door locks and its status."
+      parameters:
+        - name: site_id
+          in: path
+          description: site Id
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: "Successful get doorlocks operation"
@@ -20,12 +27,45 @@ paths:
                 type: "array"
                 items:
                   properties:
-                    lockId:
+                    deviceId:
                       type: integer
                     doorState:
                       type: string
                     lockState:
                       type: string
+
+  /doorlocks/{site_id}/{device_id}:
+    get:
+      operationId: "api.doorlocks.get_device_from_site"
+      tags:
+        - "Door Locks Site"
+      summary: "The doorlock with the provided device id."
+      description: "Get the door lock and it's status."
+      parameters:
+        - name: site_id
+          in: path
+          description: site Id
+          required: true
+          schema:
+            type: string
+        - name: device_id
+          in: path
+          description: device Id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Successful get doorlocks operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  doorState:
+                    type: string
+                  lockState:
+                    type: string
 
 servers:
   - url: /

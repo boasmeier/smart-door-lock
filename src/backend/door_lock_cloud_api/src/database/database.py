@@ -5,6 +5,12 @@ class Database():
     def __init__(self):
         pass
     
+    def does_doorlock_exist(self, siteId: str, deviceId: str) -> bool:
+        """
+        Returns whether a doorlock exists or not. Will just return if in the database both door and lock state are present.
+        """
+        pass
+
     def get_doorlocks(self) -> List[DoorLock]:
         """
         Returns all the doorlocks.
