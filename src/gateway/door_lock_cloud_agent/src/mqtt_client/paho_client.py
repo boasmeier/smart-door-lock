@@ -24,6 +24,9 @@ class PahoClient(MqttClient):
         logging.info(f"Register callback topic: {topic}, callback: {callback}")
         self._client.message_callback_add(topic, callback)
 
+    def subscribe(self, topic):
+        self._client.subscribe(topic)
+
     def on_connect(self, client, userdata, flags, rc):
         logging.info("MqttClient connected")
         client.subscribe("gateway/#")
