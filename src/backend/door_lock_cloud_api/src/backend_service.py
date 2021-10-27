@@ -1,6 +1,9 @@
 import logging
 from database.redis_database import RedisDatabase 
 from database.database import Database
+from services.telegram_service import TelegramService
+from models.events import DoorLockEvent
+from models.event_managers import DoorLockEventManager
 from mqtt_client.client import MqttClient
 from mqtt_client.paho_client import PahoClient
 import mqtt_client.topics as tp
@@ -38,12 +41,22 @@ class BackendService():
     def __init__(self, site_ids: List[str]):
         self.mqtt_client: MqttClient = PahoClient("mqtt-broker", 1883)
         self.site_ids: List[str] = site_ids
-        self.state_updater: StateUpdater = StateUpdater(RedisDatabase("doorlock-database", 6379))
+        self.db: Database = RedisDatabase("doorlock-database", 6379)
+        self.state_updater: StateUpdater = StateUpdater(self.db)
+        self.doorlock_event_manager: DoorLockEventManager = DoorLockEventManager(self.mqtt_client, self.db)
+        #self.doorlock_event_manager.register_handle(self.handle_events)
         #TODO: Add Telegram Service here
+        #TelegramService(1335464798) -> Niklas
+        self.telegram_services: List[TelegramService] = [TelegramService(-708897855)]
         self.register_callbacks()
 
     def register_callbacks(self):
         for site_id in self.site_ids:
             self.mqtt_client.register_callback(tp.lock_state(site_id, "+"), self.state_updater.on_lockstate_updated)
             self.mqtt_client.register_callback(tp.door_state(site_id, "+"), self.state_updater.on_doorstate_updated)
+
+        for telegram_service in self.telegram_services:
+            self.doorlock_event_manager.register_handle(telegram_service.handle_event)
        
+    def handle_events(self, event: DoorLockEvent):
+        logging.info(f"BackendService received {event.event_type.name} event for doorlock {event.doorlock.to_str()}")

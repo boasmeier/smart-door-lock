@@ -20,12 +20,16 @@ class DoorLock():
         self.door_state = door_state
         self.lock_state = lock_state
         self.site_id = site_id
+        self.name = f"{site_id} Door {device_id}"
 
     def to_json(self) -> Dict:
         return {definitions.DOOR_STATE: self.door_state.name, definitions.LOCK_STATE: self.lock_state.name, definitions.DEVICEID : self.device_id}
 
     def states_to_json(self) -> Dict:
         return {definitions.DOOR_STATE: self.door_state.name, definitions.LOCK_STATE: self.lock_state.name}
+
+    def to_str(self) -> str:
+        return f"DoorLock: device_id: {self.device_id}, site_id: {self.site_id}, door_state: {self.door_state.name}, lock_state: {self.lock_state.name}"
 
     @classmethod
     def from_json(json: Dict, siteId: str, deviceId: str):

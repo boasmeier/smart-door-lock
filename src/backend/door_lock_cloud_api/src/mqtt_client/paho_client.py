@@ -28,7 +28,7 @@ class PahoClient(MqttClient):
         logging.info("MqttClient connected")
         client.subscribe("iotlab/#")
         logging.info("MqttClient connected with result code "+str(rc))
-        #client.publish("hallo_test", payload="Hallo test")
+        client.publish("iotlab/lol", payload="Hallo test")
 
     def on_message(self, client, userdata, msg):
         logging.info(f"on_message - payload: {msg.topic} - message: {msg.payload}")
