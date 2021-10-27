@@ -3,7 +3,7 @@ from models.doorlock import DoorLock
 from models.events import DoorLockEvent, DoorLockEventType
 import telegram
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
 
 TOKEN = '2003633335:AAESPEbqsoAFSodzIHcox6SunazxMVzw1ps'
 
@@ -18,6 +18,7 @@ class TelegramService:
             raise Exception("Chat-ID must be provided")
         self._chat_id = chat_id
         self.updater = Updater(token=TOKEN, use_context=True)
+        self.last_doorlock = None
         dispatcher = self.updater.dispatcher
 
         # Define Handlers
@@ -32,6 +33,12 @@ class TelegramService:
             },
             fallbacks=[CommandHandler('cancel', self._cancel)])
         self.updater.dispatcher.add_handler(door_handler)
+
+        # message handler
+        self.updater.dispatcher.add_handler(MessageHandler(Filters.text, self.main_handler))
+
+        # suggested_actions_handler
+        self.updater.dispatcher.add_handler(CallbackQueryHandler(self.main_handler, pass_chat_data=True, pass_user_data=True))
 
         # Start the bot
         self.updater.start_polling()
@@ -59,11 +66,25 @@ class TelegramService:
             print("No chat-id has been found!")
         return chat_id
 
-    def send_message(self, text, chat_id=None) -> None:
+    def send_message(self, text, chat_id=None, reply_markup=None) -> None:
+        logging.info(f"TelegramService - send_messge {text}")
         if chat_id is None:
             chat_id = self._chat_id
 
-        self._bot.send_message(text=text, chat_id=chat_id)
+        self._bot.send_message(text=text, chat_id=chat_id, reply_markup=reply_markup)
+
+    def main_handler(self, update, context):
+        if update.message.text == "Yes":
+            #TODO: Send Unlock Action
+            logging.info(f"User pressed open the door {self.last_doorlock.to_str()}")
+            doorlock: DoorLock = self.last_doorlock
+            update.message.reply_text(f'Okay, will open the door {self.last_doorlock.name}!', reply_markup=ReplyKeyboardRemove())
+            self.last_doorlock = None
+
+        elif update.message.text == "No":
+            logging.info(f"User pressed don't open the door")
+            update.message.reply_text('Okay fine!', reply_markup=ReplyKeyboardRemove())
+            self.last_doorlock = None
 
     def register(self, observer) -> None:
         self._observers.append(observer)
@@ -77,25 +98,41 @@ class TelegramService:
 
     def _handle_ringing(self, doorlock: DoorLock, message: str):
         logging.info(f"_handle_ringing")
-        self.send_message(f"Hello someone is ringing at {doorlock.name}, do you want to open the door?")
+
+        self.send_message(
+           f"Hello someone is ringing at {doorlock.name}, do you want to open the door?",
+            reply_markup=ReplyKeyboardMarkup([['Yes', 'No']],
+                                             one_time_keyboard=True,
+                                             input_field_placeholder='Open the door?'))
+        
+
+    def _handle_intrusion(self, doorlock: DoorLock, message: str):
+        logging.info(f"_handle_intrusion")
+
+        #TODO: Maybe call the Police?
+        self.send_message( f"Oh no! Someone broke into {doorlock.name}.")          
+
+    def _handle_suspiciousactivity(self, doorlock: DoorLock, message: str):
+        logging.info(f"_handle_suspiciousactivity")
+        self.send_message( f"Attention! Someone is moving in front of {doorlock.name}.")         
 
     def handle_event(self, event: DoorLockEvent):
         # --- HANDLERS BELOW HERE --- #
         logging.info(f"Received door lock event {event.event_type.name}")
 
+        self.last_doorlock = event.doorlock
+
         if event.event_type == DoorLockEventType.ring:
             logging.info(f"Received door lock ring event")
-
             self._handle_ringing(event.doorlock, event.message)
-            pass
 
         elif event.event_type == DoorLockEventType.intrusion:
             logging.info(f"Received door lock intrusion event")
-            pass
+            self._handle_intrusion(event.doorlock, event.message)
 
         elif event.event_type == DoorLockEventType.suspiciousactivity:
             logging.info(f"Received door lock suspiciousactivity event")
-            pass
+            self._handle_suspiciousactivity(event.doorlock, event.message)
 
     def _start(self, update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text="I am already running")
