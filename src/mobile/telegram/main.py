@@ -2,7 +2,7 @@ from telegram_bot import Bot
 
 
 class Main:
-    bot = Bot(1335464798)
+    bot = Bot(-708897855)
 
     def start(self):
         self.bot.register(self)
