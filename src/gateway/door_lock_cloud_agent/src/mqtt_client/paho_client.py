@@ -27,10 +27,13 @@ class PahoClient(MqttClient):
     def subscribe(self, topic):
         self._client.subscribe(topic)
 
+    def publish(self, topic, msg):
+        logging.info(f"Publishing {msg} to {topic}")
+        self._client.publish(topic, msg)
+
     def on_connect(self, client, userdata, flags, rc):
         logging.info("MqttClient connected")
-        client.subscribe("gateway/#")
-        client.publish("iotlab/", payload="Gateway mqtt client connected", qos=0, retain=False)
+        #client.publish("iotlab/doorlocks/2/event/ring", payload="Gateway mqtt client connected", qos=0, retain=False)
         logging.info("MqttClient connected with result code "+str(rc))
         #client.publish("hallo_test", payload="Hallo test")
 
