@@ -1,23 +1,21 @@
-from telegram_bot import Bot
+from telegram_bot.door_bot import DoorBot
 
 
 class Main:
-    bot = Bot(-708897855)
+    bot = DoorBot(1335464798)
 
     def start(self):
+        # self.bot.start()
+
         self.bot.register(self)
 
         # Get name of bot
-        self.bot.get_name()
+        # self.bot.get_name()
 
-        # Send Message to the latest chat-ID
-        self.bot.send_message("Hello, I'm ready to start")
+        self.bot.trigger_open_door_procedure()
 
         while True:
             pass
-
-    def update(self):
-        print("I got  called")
 
 
 main = Main()

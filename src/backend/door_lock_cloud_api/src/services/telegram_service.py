@@ -4,12 +4,20 @@ from models.action_managers import DoorLockActionManager
 from models.doorlock import DoorLock
 from models.events import DoorLockEvent, DoorLockEventType
 import telegram
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters, \
+    CallbackQueryHandler
 
 TOKEN = '2003633335:AAESPEbqsoAFSodzIHcox6SunazxMVzw1ps'
 
+# Define states
+IDLE, OPEN_DOOR_REQUEST = range(2)  # Increment number with each state
+
+# constants
+OPEN_DOOR_YES = "open_door_yes"
+OPEN_DOOR_NO = "open_door_no"
 DOOR = range(1)  # Increment number with each state
+
 
 class TelegramService:
     _bot = telegram.Bot(token=TOKEN)
@@ -24,30 +32,19 @@ class TelegramService:
         self.door_lock_action_manager: DoorLockActionManager = door_lock_action_manager
         dispatcher = self.updater.dispatcher
 
+        self.state = IDLE
+
         # Define Handlers
-        start_handler = CommandHandler('start', self._start)
-        dispatcher.add_handler(start_handler)
-
-        door_handler = ConversationHandler(
-            entry_points=[CommandHandler('open', self._open_door_check)],
-            allow_reentry=True,
-            states={
-                DOOR: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_door)]
-            },
-            fallbacks=[CommandHandler('cancel', self._cancel)])
-        self.updater.dispatcher.add_handler(door_handler)
-
-        # message handler
-        self.updater.dispatcher.add_handler(MessageHandler(Filters.text, self.main_handler))
-
-        # suggested_actions_handler
-        self.updater.dispatcher.add_handler(CallbackQueryHandler(self.main_handler, pass_chat_data=True, pass_user_data=True))
+        dispatcher.add_handler(CallbackQueryHandler(self.open_door_handler))
 
         # Start the bot
         self.updater.start_polling()
 
     def __del__(self):
         self.updater.stop()
+
+    def get_chat_id(self):
+        return self._chat_id
 
     def set_chat_id(self, chat_id) -> None:
         self._chat_id = chat_id
@@ -78,7 +75,7 @@ class TelegramService:
 
     def main_handler(self, update, context):
         if update.message.text == "Yes":
-            #TODO: Send Unlock Action
+            # TODO: Send Unlock Action
             logging.info(f"User pressed open the door {self.last_doorlock.to_str()}")
             doorlock: DoorLock = self.last_doorlock
             self.door_lock_action_manager.execute_action(DoorLockAction(action_type=DoorLockActionType.unlock, message={}, doorlock=self.last_doorlock))
@@ -101,27 +98,23 @@ class TelegramService:
             observer.update()
 
     def _handle_ringing(self, doorlock: DoorLock, message: str):
+
         logging.info(f"_handle_ringing")
 
-        self.send_message(
-           f"Hello someone is ringing at {doorlock.name}, do you want to open the door?",
-            reply_markup=ReplyKeyboardMarkup([['Yes', 'No']],
-                                             one_time_keyboard=True,
-                                             input_field_placeholder='Open the door?'))
-        
+        self.send_yes_no_message(f'Are you sure to open the door: {doorlock.name}?', 'Open the door?')
+        self.set_state(OPEN_DOOR_REQUEST)
 
     def _handle_intrusion(self, doorlock: DoorLock, message: str):
         logging.info(f"_handle_intrusion")
 
-        #TODO: Maybe call the Police?
-        self.send_message( f"Oh no! Someone broke into {doorlock.name}.")          
+        # TODO: Maybe call the Police?
+        self.send_message(f"Oh no! Someone broke into {doorlock.name}.")
 
     def _handle_suspiciousactivity(self, doorlock: DoorLock, message: str):
         logging.info(f"_handle_suspiciousactivity")
-        self.send_message( f"Attention! Someone is moving in front of {doorlock.name}.")         
+        self.send_message(f"Attention! Someone is moving in front of {doorlock.name}.")
 
     def handle_event(self, event: DoorLockEvent):
-        # --- HANDLERS BELOW HERE --- #
         logging.info(f"Received door lock event {event.event_type.name}")
 
         self.last_doorlock = event.doorlock
@@ -138,31 +131,33 @@ class TelegramService:
             logging.info(f"Received door lock suspiciousactivity event")
             self._handle_suspiciousactivity(event.doorlock, event.message)
 
-    def _start(self, update, context):
-        context.bot.send_message(chat_id=update.effective_chat.id, text="I am already running")
+    def set_state(self, state):
+        self.state = state
 
-    def _cancel(self, update, context: CallbackContext) -> int:
-        update.message.reply_text('Bye! I hope we can talk again some day.', reply_markup=ReplyKeyboardRemove())
+    def send_yes_no_message(self, text, placeholder):
+        keyboard = [
+            [
+                InlineKeyboardButton("Yes", callback_data=OPEN_DOOR_YES),
+                InlineKeyboardButton("No", callback_data=OPEN_DOOR_NO),
+            ]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        self._bot.send_message(chat_id=self._chat_id, text=text, reply_markup=reply_markup)
+        self.set_state(OPEN_DOOR_REQUEST)
 
-        return ConversationHandler.END
+    def open_door_handler(self, update: Update, context: CallbackContext) -> None:
+        print("Point reached")
+        if self.state == IDLE:
+            self.send_message('Sorry, the message has already been handled')
+            return
 
-    def _open_door_check(self, update, context: CallbackContext) -> range:
-        reply_keyboard = [['Yes', 'No']]
+        query = update.callback_query
+        query.answer()
 
-        update.message.reply_text(
-            'Are you sure to open the door?',
-            reply_markup=ReplyKeyboardMarkup(reply_keyboard,
-                                             one_time_keyboard=True,
-                                             input_field_placeholder='Open the door?'))
-
-        return DOOR
-
-    def _handle_door(self, update, context: CallbackContext):
-        if context.match.string == 'Yes':
-            print("Door opening")
-            self.notify()
-            update.message.reply_text("I'm opening the door now", reply_markup=ReplyKeyboardRemove())
-        elif context.match.string == 'No':
-            update.message.reply_text("Okay, I keep the door shut", reply_markup=ReplyKeyboardRemove())
+        if query.data == OPEN_DOOR_YES:
+            self.send_message("Okay, I'll open the door")
+        elif query.data == OPEN_DOOR_NO:
+            self.send_message("Okay, I'll keep teh door shut")
         else:
-            print("Something went wrong")
+            self.send_message("Something went wrong. Query data: {}".format(query.data))
+
+        self.set_state(IDLE)
