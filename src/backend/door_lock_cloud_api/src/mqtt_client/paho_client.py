@@ -28,6 +28,7 @@ class PahoClient(MqttClient):
         """
         logging.info(f"PahoClient publish {message} on topic: {topic}")
         self._client.publish(topic, message)
+        logging.info(f"PahoClient published {message} on topic: {topic}")
 
     def on_connect(self, client, userdata, flags, rc):
         logging.info("MqttClient connected")

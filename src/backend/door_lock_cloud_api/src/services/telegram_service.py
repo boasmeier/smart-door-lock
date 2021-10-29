@@ -16,8 +16,6 @@ IDLE, OPEN_DOOR_REQUEST = range(2)  # Increment number with each state
 # constants
 OPEN_DOOR_YES = "open_door_yes"
 OPEN_DOOR_NO = "open_door_no"
-DOOR = range(1)  # Increment number with each state
-
 
 class TelegramService:
     _bot = telegram.Bot(token=TOKEN)
@@ -102,7 +100,6 @@ class TelegramService:
         logging.info(f"_handle_ringing")
 
         self.send_yes_no_message(f'Are you sure to open the door: {doorlock.name}?', 'Open the door?')
-        self.set_state(OPEN_DOOR_REQUEST)
 
     def _handle_intrusion(self, doorlock: DoorLock, message: str):
         logging.info(f"_handle_intrusion")
@@ -145,19 +142,24 @@ class TelegramService:
         self.set_state(OPEN_DOOR_REQUEST)
 
     def open_door_handler(self, update: Update, context: CallbackContext) -> None:
-        print("Point reached")
+        logging.info(f"Point reached state: {self.state}")
         if self.state == IDLE:
             self.send_message('Sorry, the message has already been handled')
             return
+
+        self.set_state(IDLE)
 
         query = update.callback_query
         query.answer()
 
         if query.data == OPEN_DOOR_YES:
             self.send_message("Okay, I'll open the door")
+            doorlock: DoorLock = self.last_doorlock
+            self.door_lock_action_manager.execute_action(DoorLockAction(action_type=DoorLockActionType.unlock, message="", doorlock=self.last_doorlock))
+        
         elif query.data == OPEN_DOOR_NO:
             self.send_message("Okay, I'll keep teh door shut")
         else:
             self.send_message("Something went wrong. Query data: {}".format(query.data))
 
-        self.set_state(IDLE)
+        logging.info(f"Second Point reached state: {self.state}")
