@@ -22,6 +22,13 @@ class PahoClient(MqttClient):
         logging.info(f"Register callback topic: {topic}, callback: {callback}")
         self._client.message_callback_add(topic, callback)
 
+    def publish(self, topic: str, message: str):
+        """
+        Publishs a message to the passed topic.
+        """
+        logging.info(f"PahoClient publish {message} on topic: {topic}")
+        self._client.publish(topic, message)
+
     def on_connect(self, client, userdata, flags, rc):
         logging.info("MqttClient connected")
         client.subscribe("iotlab/#")

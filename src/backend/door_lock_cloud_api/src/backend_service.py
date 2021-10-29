@@ -4,6 +4,7 @@ from database.database import Database
 from services.telegram_service import TelegramService
 from models.events import DoorLockEvent
 from models.event_managers import DoorLockEventManager
+from models.action_managers import DoorLockActionManager, MqttDoorLockActionManager
 from mqtt_client.client import MqttClient
 from mqtt_client.paho_client import PahoClient
 import mqtt_client.topics as tp
@@ -14,7 +15,6 @@ import models.definitions as definitions
 
 def on_state_updated(mosq, obj, msg):
     logging.info(f"State updated {msg.payload}")
-
 class StateUpdater():
     def __init__(self, db: Database):
         self.db: Database = db
@@ -44,10 +44,11 @@ class BackendService():
         self.db: Database = RedisDatabase("doorlock-database", 6379)
         self.state_updater: StateUpdater = StateUpdater(self.db)
         self.doorlock_event_manager: DoorLockEventManager = DoorLockEventManager(self.mqtt_client, self.db)
+        self.doorlock_action_manager: DoorLockActionManager = MqttDoorLockActionManager(self.mqtt_client, self.db)
         #self.doorlock_event_manager.register_handle(self.handle_events)
         #TODO: Add Telegram Service here
         #TelegramService(1335464798) -> Niklas
-        self.telegram_services: List[TelegramService] = [TelegramService(-708897855)]
+        self.telegram_services: List[TelegramService] = [TelegramService(-708897855, self.doorlock_action_manager)]
         self.register_callbacks()
 
     def register_callbacks(self):

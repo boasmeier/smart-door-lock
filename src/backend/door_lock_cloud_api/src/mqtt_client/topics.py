@@ -1,5 +1,6 @@
 import logging
 from models.events import DoorLockEventType, EventType
+from models.actions import ActionType, DoorLockAction
 from models import definitions
 
 delimiter = "/"
@@ -10,6 +11,9 @@ def door_locks(site_id: str) -> str:
 
 def event(event_type: EventType) -> str:
     return wildcard + delimiter + event_type.name + delimiter + wildcard + delimiter + definitions.EVENT + delimiter + wildcard
+
+def doorlock_action(action: DoorLockAction) -> str:
+    return action.doorlock.site_id + delimiter + ActionType.doorlocks.name + delimiter + action.doorlock.device_id + delimiter + definitions.ACTION + delimiter + action.action_type.name
 
 def door_state(site_id: str, device_id: str) -> str:
     return door_locks(site_id) + delimiter + device_id + delimiter + definitions.STATE + delimiter + definitions.DOOR

@@ -1,4 +1,6 @@
 import logging
+from models.actions import DoorLockAction, DoorLockActionType
+from models.action_managers import DoorLockActionManager
 from models.doorlock import DoorLock
 from models.events import DoorLockEvent, DoorLockEventType
 import telegram
@@ -13,12 +15,13 @@ class TelegramService:
     _bot = telegram.Bot(token=TOKEN)
     _observers = []
 
-    def __init__(self, chat_id: int = None):
+    def __init__(self, chat_id: int = None, door_lock_action_manager: DoorLockActionManager = None):
         if chat_id is None:
             raise Exception("Chat-ID must be provided")
         self._chat_id = chat_id
         self.updater = Updater(token=TOKEN, use_context=True)
         self.last_doorlock = None
+        self.door_lock_action_manager: DoorLockActionManager = door_lock_action_manager
         dispatcher = self.updater.dispatcher
 
         # Define Handlers
@@ -78,6 +81,7 @@ class TelegramService:
             #TODO: Send Unlock Action
             logging.info(f"User pressed open the door {self.last_doorlock.to_str()}")
             doorlock: DoorLock = self.last_doorlock
+            self.door_lock_action_manager.execute_action(DoorLockAction(action_type=DoorLockActionType.unlock, message={}, doorlock=self.last_doorlock))
             update.message.reply_text(f'Okay, I will open the door {self.last_doorlock.name}!', reply_markup=ReplyKeyboardRemove())
             self.last_doorlock = None
 
