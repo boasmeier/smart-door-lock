@@ -2,3 +2,4 @@
 **/*.log
 **/secrets.hpp
 .idea/
+.DS_Store
