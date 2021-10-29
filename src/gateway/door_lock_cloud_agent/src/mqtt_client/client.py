@@ -7,3 +7,15 @@ class MqttClient():
         Registers a callback for receiving messages for this client.
         """
         pass
+
+    def subscribe(self, topic):
+        """
+        Subscribes to a topic.
+        """
+        pass
+
+    def publish(self, topic, msg):
+        """
+        Publish a message to a topic.
+        """
+        pass
