@@ -14,7 +14,6 @@ class DoorLockEventManager():
         self.mqtt_client.register_callback(tp.event(EventType.doorlocks), self.on_event)
         self.db: Database = db
 
-    #TODO: register unregister, set correct signature...
     def register_handle(self, handle):
         """
         Registers for updates on DoorLock Events. The handler function needs the following signature
@@ -37,6 +36,7 @@ class DoorLockEventManager():
             doorlock: DoorLock = self.db.get_doorlock(site_id, device_id)
 
             event: DoorLockEvent = DoorLockEvent(event_type, msg.payload, doorlock)
+            
             for handle in self._handles:
                 handle(event)
 

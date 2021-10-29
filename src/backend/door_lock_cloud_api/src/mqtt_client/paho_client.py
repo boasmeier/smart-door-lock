@@ -3,8 +3,6 @@ from mqtt_client.client import MqttClient
 import logging
 import time
 
-callback = {}
-
 class PahoClient(MqttClient):
     def __init__(self, address: str, port: int):
         time.sleep(2)

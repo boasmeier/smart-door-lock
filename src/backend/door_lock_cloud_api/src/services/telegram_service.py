@@ -78,7 +78,7 @@ class TelegramService:
             #TODO: Send Unlock Action
             logging.info(f"User pressed open the door {self.last_doorlock.to_str()}")
             doorlock: DoorLock = self.last_doorlock
-            update.message.reply_text(f'Okay, will open the door {self.last_doorlock.name}!', reply_markup=ReplyKeyboardRemove())
+            update.message.reply_text(f'Okay, I will open the door {self.last_doorlock.name}!', reply_markup=ReplyKeyboardRemove())
             self.last_doorlock = None
 
         elif update.message.text == "No":

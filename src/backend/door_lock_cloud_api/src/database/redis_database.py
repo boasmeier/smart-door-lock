@@ -33,7 +33,6 @@ class RedisDatabase(Database):
         """
         doorlocks: List[DoorLock] = []
         for device_id in self._get_all_device_ids(siteId):
-            logging.info(f"Next deviceId: {device_id}")
             doorlocks.append(self.get_doorlock(siteId, device_id))
         return doorlocks
 
@@ -41,7 +40,7 @@ class RedisDatabase(Database):
         """
         Returns all the doorlock in the database with the passed siteId and deviceId.
         """
-        return DoorLock(deviceId, siteId, DoorState[json.loads(self._client.get(self._get_doorstate_key(siteId, deviceId)))[definitions.DOOR_STATE]], LockState[json.loads(self._client.get(self._get_lockstate_key(siteId, deviceId)))[definitions.LOCK_STATE]])
+        return DoorLock(deviceId, siteId, DoorState[json.loads(self._client.get(self._get_doorstate_key(siteId, deviceId)))[definitions.DOOR_STATE]], LockState[json.loads(self._client.get(self._get_lockstate_key(siteId, deviceId)))[definitions.LOCK_STATE]], json.loads(self._client.get(self._get_name_key(siteId, deviceId)))[definitions.NAME])
 
     def set_doorstate(self, siteId: str, deviceId: str, doorState: DoorState):
         """
@@ -66,6 +65,9 @@ class RedisDatabase(Database):
        
     def _get_doorstate_key(self, siteId: str, deviceId: str):
         return self._base_key(siteId, deviceId) + RedisDatabase.delimiter + definitions.STATE + RedisDatabase.delimiter + definitions.DOOR
+
+    def _get_name_key(self, siteId: str, deviceId: str):
+        return self._base_key(siteId, deviceId) + RedisDatabase.delimiter + definitions.NAME
 
     def _get_all_device_ids(self, siteId: str) -> List[str]:
         return set.union(set([self._parse_device_id(str(key)) for key in self._client.keys((self._get_lockstate_key(siteId, "*")))]) , set([self._parse_device_id(str(key)) for key in self._client.keys((self._get_doorstate_key(siteId, "*")))]))
