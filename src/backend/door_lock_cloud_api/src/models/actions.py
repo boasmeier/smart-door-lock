@@ -11,7 +11,7 @@ class DoorLockActionType(Enum):
     lock = 1
 
 class DoorLockAction():
-    def __init__(self, action_type: DoorLockActionType, message: Dict, doorlock: DoorLock) -> None:
+    def __init__(self, action_type: DoorLockActionType, message: str, doorlock: DoorLock) -> None:
         self.action_type: DoorLockActionType = action_type
-        self.message: Dict = message
+        self.message: str = message
         self.doorlock: DoorLock = doorlock

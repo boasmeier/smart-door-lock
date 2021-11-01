@@ -158,7 +158,7 @@ class TelegramService:
             self.door_lock_action_manager.execute_action(DoorLockAction(action_type=DoorLockActionType.unlock, message="", doorlock=self.last_doorlock))
         
         elif query.data == OPEN_DOOR_NO:
-            self.send_message("Okay, I'll keep teh door shut")
+            self.send_message("Okay, I'll keep the door shut")
         else:
             self.send_message("Something went wrong. Query data: {}".format(query.data))
 
