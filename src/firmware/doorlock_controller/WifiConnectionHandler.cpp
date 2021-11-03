@@ -1,54 +1,45 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include "WifiConnectionHandler.hpp"
+#include "SerialLogger.hpp"
 
 WifiConnectionHandler::WifiConnectionHandler() {
   if(WiFi.status() == WL_NO_MODULE) {
-    Serial.println("Communication with WiFi module failed!");
+    SERIAL_ERROR("Communication with WiFi module failed!");
     for(;;){ }
   }
 
   String fv = WiFi.firmwareVersion();
   if(fv > WIFI_FIRMWARE_LATEST_VERSION) {
-    Serial.println("Please upgrage the firmware");
+    SERIAL_INFO("Please upgrage the firmware");
   }
 
   byte mac[6];
   WiFi.macAddress(mac);
-  Serial.print("MAC: ");
-  printMacAddress(mac);
+  SERIAL_INFO("MAC: %02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 void WifiConnectionHandler::scanNetworks() {
-  Serial.println("Scanning for nearby networks...");
+  SERIAL_INFO("Scanning for nearby networks...");
   int numSsid = WiFi.scanNetworks();
   if (numSsid == -1) {
-    Serial.println("Couldn't get a wifi connection");
+    SERIAL_ERROR("Couldn't get a wifi connection");
     for(;;){}
   }
 
-  Serial.print("number of available networks: ");
-  Serial.println(numSsid);
+  SERIAL_INFO("number of available networks: %d", numSsid);
   for (int thisNet = 0; thisNet < numSsid; thisNet++) {
-    Serial.print(thisNet);
-    Serial.print(")");
-    Serial.print(WiFi.SSID(thisNet));
-    Serial.print("\tSignal:");
-    Serial.print(WiFi.RSSI(thisNet));
-    Serial.print(" dBm ");
-    printEncryptionType(WiFi.encryptionType(thisNet));
+    SERIAL_INFO("%d)%s %s \tSignal: %i dBm", thisNet, WiFi.SSID(thisNet), getEncryptionType(WiFi.encryptionType(thisNet)), WiFi.RSSI(thisNet));
   }
-  Serial.println();
 }
 
 void WifiConnectionHandler::connectWPA2(char ssid[], char pass[]) {
   while (m_status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to WPA SSID: ");
-    Serial.println(ssid);
+    SERIAL_INFO("Attempting to connect to WPA SSID: %s", ssid);
     m_status = WiFi.begin(ssid, pass);
     delay(10000);
   }
-  Serial.print("You're connected to the network");
+  SERIAL_INFO("You're connected to the network");
   printCurrentNet();
   printWifiData();
 }
@@ -57,75 +48,80 @@ int WifiConnectionHandler::getStatus() {
   return m_status;
 }
 
-void WifiConnectionHandler::printMacAddress(byte mac[]) {
-  for (int i = 5; i >= 0; i--) {
-    if (mac[i] < 16) {
-      Serial.print("0");
-    }
-    Serial.print(mac[i], HEX);
-    if (i > 0) {
-      Serial.print(":");
-    }
-  }
-  Serial.println();
+String WifiConnectionHandler::getIp() {
+  IPAddress ip = WiFi.localIP();
+  return ipAddress2String(ip);
 }
 
-void WifiConnectionHandler::printEncryptionType(int thisType) {
+const char* WifiConnectionHandler::getSsid() {
+  return WiFi.SSID();
+}
+
+void WifiConnectionHandler::getMac(byte mac[]) {
+  WiFi.macAddress(mac);
+}
+
+void WifiConnectionHandler::getBssid(byte bssid[]) {
+  WiFi.BSSID(bssid);
+}
+
+const char* WifiConnectionHandler::getEncryptionType(int thisType) {
   switch(thisType) {
     case ENC_TYPE_WEP:
-      Serial.println("WEP");
+      return "WEP";
       break;
     case ENC_TYPE_TKIP:
-      Serial.println("WPA");
+      return "WPA";
       break;
     case ENC_TYPE_CCMP:
-      Serial.println("WPA2");
+      return "WPA2";
       break;
     case ENC_TYPE_NONE:
-      Serial.println("None");
+      return "None";
       break;
     case ENC_TYPE_AUTO:
-      Serial.println("Auto");
+      return "Auto";
       break;
     case ENC_TYPE_UNKNOWN:
     default:
-      Serial.println("Unknown");
+      return "Unknown";
       break;
   }
+}
+
+String WifiConnectionHandler::ipAddress2String(const IPAddress& ipAddress)
+{
+  return String(ipAddress[0]) + String(".") +\
+  String(ipAddress[1]) + String(".") +\
+  String(ipAddress[2]) + String(".") +\
+  String(ipAddress[3])  ; 
 }
 
 void WifiConnectionHandler::printWifiData() {
   // print IP address of arduino
   IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address of arduino: ");
-  Serial.println(ip);
+  SERIAL_INFO("IP Address of arduino: %s", ipAddress2String(ip).c_str());
 
   // print MAC of arduino
   byte mac[6];
   WiFi.macAddress(mac);
-  Serial.print("MAC address of arduino: ");
-  printMacAddress(mac);
+  SERIAL_INFO("MAC address of arduino: %02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 void WifiConnectionHandler::printCurrentNet() {
   // print the SSID of the network the arduino is connected to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
+  SERIAL_INFO("SSID: %s", WiFi.SSID());
   
   // print the MAC address of the router the arduino is connected to:
   byte bssid[6];
   WiFi.BSSID(bssid);
-  Serial.print("BSSID: ");
-  printMacAddress(bssid);
+  SERIAL_INFO("BSSID: %02X:%02X:%02X:%02X:%02X:%02X", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
 
   // print the received signal strength:
   long rssi = WiFi.RSSI();
-  Serial.print("Signal strength (RSSI): ");
-  Serial.println(rssi);
+  SERIAL_INFO("Signal strength (RSSI): %d", rssi);
 
   // print the encryption type:
   byte encryption = WiFi.encryptionType();
-  Serial.print("Encryption Type: ");
-  Serial.println(encryption, HEX);
-  Serial.println();
+  SERIAL_INFO("Encryption Type: %s", getEncryptionType(encryption));
 }

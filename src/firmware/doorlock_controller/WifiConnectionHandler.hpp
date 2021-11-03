@@ -8,13 +8,20 @@ class WifiConnectionHandler {
     void scanNetworks();
     void connectWPA2(char ssid[], char pass[]);
     int getStatus();
+    String getIp();
+    const char* getSsid();
+    void getMac(byte mac[]);
+    void getBssid(byte bssid[]);
+    
 
   private:
-    void printMacAddress(byte mac[]);
-    void printEncryptionType(int thisType);
+    const char* getEncryptionType(int thisType);
     void printWifiData();
     void printCurrentNet();
+    String ipAddress2String(const IPAddress& ipAddress);
 
     int m_status = WL_IDLE_STATUS;
+    const char* ip;
+    const char* ssid;
   
 };

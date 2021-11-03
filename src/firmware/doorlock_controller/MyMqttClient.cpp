@@ -1,26 +1,19 @@
 #include "MyMqttClient.hpp"
+#include "SerialLogger.hpp"
 
 MyMqttClient::MyMqttClient(const char *broker, int port): m_mqttClient(m_wifiClient), _broker(broker), _port(port) {
-  Serial.print("Attempting to connect to the MQTT broker: ");
-  Serial.println(_broker);
+  SERIAL_INFO("Attempting to connect to the MQTT broker: %s", _broker);
   if (!m_mqttClient.connect(_broker, _port)) {
-    Serial.print("MQTT connection failed! Error code = ");
-    Serial.println(m_mqttClient.connectError());
+    SERIAL_ERROR("MQTT connection failed! Error code = %d", m_mqttClient.connectError());
     for(;;) { }
   }
-  Serial.println("You're connected to the MQTT broker!");
-  Serial.println();
+  SERIAL_INFO("You're connected to the MQTT broker!");
 }
 
 void MyMqttClient::publish(const char *topic, const char *msg) {
+  SERIAL_INFO("Sending message to topic:  %s, msg: %s", topic, msg);
   m_mqttClient.poll();
-
-  Serial.print("Sending message to topic: ");
-  Serial.println(topic);
-  Serial.println(msg);
-  
   m_mqttClient.beginMessage(topic);
   m_mqttClient.print(msg);
   m_mqttClient.endMessage();
-  Serial.println();
 }
