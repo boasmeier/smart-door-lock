@@ -8,10 +8,11 @@ callback = {}
 class PahoClient(MqttClient):
     def __init__(self, address: str, port: int):
         time.sleep(5)
-        logging.info(f"Connecting PahoClient to {address}:{port}")
         self.address = address
         self.port = port
         self.callbacks = []
+        logging.info(f"Connecting PahoClient to {self.address}:{self.port}")
+
         self._client = mqtt.Client()
 
         self._client.on_connect = self.on_connect

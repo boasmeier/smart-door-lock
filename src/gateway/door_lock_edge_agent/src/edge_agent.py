@@ -1,77 +1,52 @@
 import logging
 import logging.config
-from os import path
 from typing import Dict, List
+from arduino_listener import ArduinoListener
+from cloud_publisher import CloudPublisher
+from edge_logging.log_handler import PythonLogHandler
+from edge_logging.log_manager import LogManager
+from edge_logging.log_provider import ArduinoMqttLogProvider
+from models.bell import BellHandler, DummyBell
 from mqtt_client.client import MqttClient
 from mqtt_client.paho_client import PahoClient
-import mqtt_client.topics as tp
 from settings import *
+from settings import Settings
+class EdgeAgent():
+    def __init__(self, settings: Settings):
+        self.setup_cloud_client(settings.mqtt_cloud)
+        self.setup_gateway_client(settings.mqtt_gateway)
+        self.setup_log_manager(settings.device_ids)
+        self.setup_cloud_publisher(settings.site_id)
+        self.setup_bell()
+        self.setup_arduino_listener(settings.device_ids)
 
-class CloudAgent():
-    def __init__(self, device_ids: List[str]):
-        self.setup_cloud_client()
-        self.setup_gateway_client()
-        self.device_ids: List[str] = device_ids
-        self.arduinoLogger = logging.getLogger('arduino')
-        self.rootLogger = logging.getLogger('root')
+    def setup_cloud_client(self, mqtt_cloud_settings: MqttServerSettings):
+        self.mqtt_cloud_client: MqttClient = PahoClient(mqtt_cloud_settings.host, mqtt_cloud_settings.port)
+        # TODO: ActionHandler!!!
+        self.mqtt_cloud_client.subscribe("iotlab/doorlocks/1/action/unlock")
+        self.mqtt_cloud_client.subscribe("iotlab/doorlocks/1/action/lock")
 
-    def setup_cloud_client(self):
-        self.mqtt_cloud_client: MqttClient = PahoClient(CLOUD_MQTT_HOST, CLOUD_MQTT_PORT)
-
-    def setup_gateway_client(self):
-        self.mqtt_gateway_client: MqttClient = PahoClient(GATEWAY_MQTT_HOST, GATEWAY_MQTT_PORT)
-        # register to topics the arduino publishes to
-        self.mqtt_gateway_client.subscribe("gateway/1/state/door")
-        self.mqtt_gateway_client.subscribe("gateway/1/state/lock")
-        self.mqtt_gateway_client.subscribe("gateway/1/event/intrusion")
-        self.mqtt_gateway_client.subscribe("gateway/1/event/suspiciousactivity")
-        self.mqtt_gateway_client.subscribe("gateway/1/event/ring")
-        self.mqtt_gateway_client.subscribe("gateway/1/telemetry/logs")
-
-        # register callbacks
-        self.mqtt_gateway_client.register_callback("gateway/1/state/door", self.forward_door_state_to_cloud)
-        self.mqtt_gateway_client.register_callback("gateway/1/state/lock", self.forward_lock_state_to_cloud)
-        self.mqtt_gateway_client.register_callback("gateway/1/event/intrusion", self.forward_intrusion_event_to_cloud)
-        self.mqtt_gateway_client.register_callback("gateway/1/event/suspiciousactivity", self.forward_suspicious_activity_event_to_cloud)
-        self.mqtt_gateway_client.register_callback("gateway/1/event/ring", self.forward_ring_event_to_cloud)
-        self.mqtt_gateway_client.register_callback("gateway/1/telemetry/logs", self.handle_log_telemetry_from_arduino)
+    def setup_gateway_client(self, mqtt_gateway_settings: MqttServerSettings):
+        self.mqtt_gateway_client: MqttClient = PahoClient(mqtt_gateway_settings.host, mqtt_gateway_settings.port)
 
         # register to tipics the cloud publishes to
-        self.mqtt_gateway_client.subscribe("iotlab/doorlocks/1/action/unlock")
-        self.mqtt_gateway_client.subscribe("iotlab/doorlocks/1/action/lock")
 
-    def forward_door_state_to_cloud(self, client, userdata, msg):
-        logging.info(f"Forward to cloud - topic: {msg.topic} - message: {msg.payload}")
-        self.mqtt_cloud_client.publish("iotlab/doorlocks/2/state/door", "Door state changed from device 1")
-    
-    def forward_lock_state_to_cloud(self, client, userdata, msg):
-        logging.info(f"Forward to cloud - topic: {msg.topic} - message: {msg.payload}")
-        self.mqtt_cloud_client.publish("iotlab/doorlocks/2/state/lock", "Lock state changed from device 1")
+    def setup_log_manager(self, device_ids: List[str]):
+        """
+        Setups the handling of logs.
+        """
+        self.log_manager = LogManager()
+        self.log_manager.add_log_provider(ArduinoMqttLogProvider(self.mqtt_gateway_client, device_ids))
+        self.log_manager.add_log_handler(PythonLogHandler("arduino"))
 
-    def forward_ring_event_to_cloud(self, client, userdata, msg):
-        logging.info(f"Forward to cloud - topic: {msg.topic} - message: {msg.payload}")
-        self.mqtt_cloud_client.publish("iotlab/doorlocks/2/event/ring", "Ring event from device 1")
+    def setup_arduino_listener(self, device_ids: List[str]):
+        self.arduino_listener = ArduinoListener(self.mqtt_gateway_client, device_ids)
+        self.arduino_listener.subscribe_to_states(self.cloud_publisher.handle_state)
+        self.arduino_listener.subscribe_to_events(self.cloud_publisher.handle_event)
+        self.arduino_listener.subscribe_to_events(self.bell_handler.handle_event)
 
-    def forward_ring_event_to_cloud(self, client, userdata, msg):
-        logging.info(f"Forward to cloud - topic: {msg.topic} - message: {msg.payload}")
-        self.mqtt_cloud_client.publish("iotlab/doorlocks/2/event/ring", "Ring event from device 1")
+    def setup_cloud_publisher(self, site_id: str):
+        self.cloud_publisher = CloudPublisher(self.mqtt_cloud_client, site_id)
 
-    def forward_intrusion_event_to_cloud(self, client, userdata, msg):
-        logging.info(f"Forward to cloud - topic: {msg.topic} - message: {msg.payload}")
-        self.mqtt_cloud_client.publish("iotlab/doorlocks/2/event/intrusion", "Ring event from device 1")
-
-    def forward_suspicious_activity_event_to_cloud(self, client, userdata, msg):
-        logging.info(f"Forward to cloud - topic: {msg.topic} - message: {msg.payload}")
-        self.mqtt_cloud_client.publish("iotlab/doorlocks/2/event/suspiciousactivity", "Ring event from device 1")
-
-    def handle_log_telemetry_from_arduino(self, client, userdata, msg):
-        logging.info(f"Handle arduino telemetry - topic: {msg.topic} - message: {msg.payload}")
-        self.arduinoLogger.info(msg.payload)
-    
-
-
-if __name__ == "__main__":
-    logging.config.fileConfig(path.join(path.dirname(path.abspath(__file__)), 'logger.conf'))
-    agent = CloudAgent("arduino")
-    while(1):
-        continue
+    def setup_bell(self):
+        self.bell_handler = BellHandler(DummyBell())

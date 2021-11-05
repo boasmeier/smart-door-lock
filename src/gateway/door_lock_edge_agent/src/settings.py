@@ -1,8 +1,14 @@
-#CLOUD_MQTT_HOST = "192.168.22.232" 
-#CLOUD_MQTT_PORT = 1885
-ARDUINO_1_ID = 1
-ARDUINO_2_ID = 2
-CLOUD_MQTT_HOST = "broker.emqx.io"
-CLOUD_MQTT_PORT = 1883
-GATEWAY_MQTT_HOST = "127.0.0.1"
-GATEWAY_MQTT_PORT = 1884
+import configparser
+from typing import List
+
+class MqttServerSettings():
+    def __init__(self, host: str, port:int) -> None:
+        self.host = host
+        self.port = int(port)
+
+class Settings():
+    def __init__(self, config: configparser.ConfigParser):
+        self.mqtt_gateway = MqttServerSettings(str(config["Gateway"]["MqttHost"]), int(config["Gateway"]["MqttPort"]))
+        self.mqtt_cloud = MqttServerSettings(str(config["Cloud"]["MqttHost"]), int(config["Gateway"]["MqttPort"]))
+        self.site_id = config["Site"]["SiteId"]
+        self.device_ids: List[str] = config["Site"]["DeviceIds"].split(",")
