@@ -1,32 +1,58 @@
 version: "3.8"
 services:
-    doorlock-cloud-api:
-        build: ../door_lock_cloud_api/
-        ports:
-        - "5001:5001"
-        restart: always
-        depends_on:
-          - "mqtt-broker"
-          - "doorlock-database"
+  doorlock-cloud-api:
+    build: ../door_lock_cloud_api/
+    ports:
+      - "5001:5001"
+    restart: always
+    depends_on:
+      - "mqtt-broker"
+      - "doorlock-database"
 
-    mqtt-broker:
-        build: ../mqtt_broker/
-        ports:
-            - "1885:1883"
-            - "9001:9001"
-            - "18083:18083"
-            - "4369:4369"
-        volumes:
-            - vol-emqx-data:/opt/emqx/data
-            - vol-emqx-etc:/opt/emqx/etc
-            - vol-emqx-log:/opt/emqx/log
+  mqtt-broker:
+    build: ../mqtt_broker/
+    ports:
+      - "1885:1883"
+      - "9001:9001"
+      - "18083:18083"
+      - "4369:4369"
+    volumes:
+      - vol-emqx-data:/opt/emqx/data
+      - vol-emqx-etc:/opt/emqx/etc
+      - vol-emqx-log:/opt/emqx/log
 
-    doorlock-database:
-      build: ../door_lock_database/
-      ports: 
-        - "6379:6379"
-      volumes:
-          - redis-volume:/data
+  doorlock-database:
+    build: ../door_lock_database/
+    ports: 
+      - "6379:6379"
+    volumes:
+      - redis-volume:/data
+
+
+#Elastic Stack
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    environment:
+      #- node.name=es01
+      #- cluster.name=es-docker-cluster
+      #- discovery.seed_hosts=es02,es03
+      - discovery.type=single-node
+      #- bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.15.1
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
 
 volumes:
   vol-emqx-data:
@@ -37,3 +63,5 @@ volumes:
     name: foo-emqx-log
   redis-volume:
     name: redis-volume
+  elasticsearch-data:
+    name: elasticsearch-data
