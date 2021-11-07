@@ -2,7 +2,7 @@ version: "3.8"
 services:
   mqtt-broker-2:
     #container_name: deploy-mqtt-gateway-broker-1
-    build: ../mqtt_gateway_broker/
+    build: ./mqtt_gateway_broker/
     ports:
         - "1884:1883"
         - "9002:9001"
@@ -14,7 +14,7 @@ services:
       - vol-emqx-log:/opt/emqx/log
 
   filebeat:
-    build: ../filebeat/
+    build: ./filebeat/
     user: root
     volumes:
       - /var/lib/docker:/var/lib/docker:ro

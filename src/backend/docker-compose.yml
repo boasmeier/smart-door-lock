@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   doorlock-cloud-api:
-    build: ../door_lock_cloud_api/
+    build: ./door_lock_cloud_api/
     ports:
       - "5001:5001"
     restart: always
@@ -10,7 +10,7 @@ services:
       - "doorlock-database"
 
   mqtt-broker:
-    build: ../mqtt_broker/
+    build: ./mqtt_broker/
     ports:
       - "1885:1883"
       - "9001:9001"
@@ -22,7 +22,7 @@ services:
       - vol-emqx-log:/opt/emqx/log
 
   doorlock-database:
-    build: ../door_lock_database/
+    build: ./door_lock_database/
     ports: 
       - "6379:6379"
     volumes:
