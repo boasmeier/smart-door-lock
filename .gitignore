@@ -3,3 +3,5 @@
 **/secrets.hpp
 .idea/
 .DS_Store
+.vscode
+**/doorlock_controller/build
