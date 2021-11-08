@@ -1,8 +1,8 @@
 #pragma once
 #include <Arduino.h>
 #include <stdarg.h>
-#include "MyMqttClient.hpp"
-#include "DoorlockConfig.h"
+#include "../connection/MyMqttClient.hpp"
+#include "../config/DoorlockConfig.h"
 
 
 #define MQTT_INFO(client, fmt, ...) MqttLogger::info(client, PSTR(fmt), ##__VA_ARGS__)

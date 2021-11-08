@@ -23,20 +23,20 @@
 */
 #include <SPI.h>
 #include <WiFiNINA.h>
-#include "WifiConnectionHandler.hpp"
-#include "MyMqttClient.hpp"
-#include "MqttTopics.hpp"
-#include "secrets.hpp"
-#include "DoorlockConfig.h"
-#include "SerialLogger.hpp"
-#include "MqttLogger.hpp"
+#include "src/connection/WifiConnectionHandler.hpp"
+#include "src/connection/MyMqttClient.hpp"
+#include "src/connection/MqttTopics.hpp"
+#include "src/config/secrets.hpp"
+#include "src/config/DoorlockConfig.h"
+#include "src/logger/MqttLogger.hpp"
+#include "src/logger/SerialLogger.hpp"
 
 const int buttonPin = 2;     // the number of the pushbutton pin
 // variables will change:
 int buttonState = 0;         // variable for reading the pushbutton status
 
-MyMqttClient *mqtt;
 WifiConnectionHandler *connHandl;
+MyMqttClient *mqtt;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -50,6 +50,9 @@ void setup() {
   connectToWifi();
   mqtt = new MyMqttClient(MQTT_HOST, MQTT_PORT);
   logSuccessfullConnectionToCloud();
+  
+  (*mqtt).m_mqttClient.onMessage(onMqttMessage);
+  mqtt->subscribeTo("test/subscribe");
   
   // initialize the pushbutton pin as an input:
   pinMode(buttonPin, INPUT);
@@ -91,4 +94,14 @@ void logSuccessfullConnectionToCloud() {
   connHandl->getBssid(bssid);
   MQTT_INFO(mqtt, "BSSID: %02X:%02X:%02X:%02X:%02X:%02X", bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
   MQTT_INFO(mqtt, "Arduino connected to broker %s:%d", MQTT_HOST, MQTT_PORT);
+}
+
+void onMqttMessage(int messageSize) {
+  String msg = "";
+  String topic = (*mqtt).m_mqttClient.messageTopic();
+  while((*mqtt).m_mqttClient.available()) {
+    char c = (char)(*mqtt).m_mqttClient.read();
+    msg.concat(c);
+  }
+  SERIAL_INFO("onMqttMessage - topic: %s - message: %s", topic.c_str(), msg.c_str());
 }

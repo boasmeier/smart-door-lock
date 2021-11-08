@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include "WifiConnectionHandler.hpp"
-#include "SerialLogger.hpp"
+#include "../logger/SerialLogger.hpp"
 
 WifiConnectionHandler::WifiConnectionHandler() {
   if(WiFi.status() == WL_NO_MODULE) {

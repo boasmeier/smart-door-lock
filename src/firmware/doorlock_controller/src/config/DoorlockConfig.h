@@ -1,4 +1,5 @@
 #pragma once
+#include "../connection/MyMqttClient.hpp"
 
 #define DEVICE_ID "1"
 
@@ -7,6 +8,7 @@
 #define MQTT_PORT 1884
 
 #define LOG_SIZE_MAX 128
+
 /*
 #define DOOR_STATE "doorState";
 #define LOCK_STATE "lockState";

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <stdarg.h>
 #include "SerialLogger.hpp"
-#include "DoorlockConfig.h"
+#include "../config/DoorlockConfig.h"
 
 static void SerialLogger::info(const char *fmt, ...) {
   char msg[LOG_SIZE_MAX];

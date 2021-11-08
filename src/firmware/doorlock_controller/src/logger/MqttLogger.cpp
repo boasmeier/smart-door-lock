@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <stdarg.h>
 #include "MqttLogger.hpp"
-#include "MyMqttClient.hpp"
-#include "MqttTopics.hpp"
+#include "../connection/MyMqttClient.hpp"
+#include "../connection/MqttTopics.hpp"
 
 void MqttLogger::info(MyMqttClient *client, const char *fmt, ...) {
   char msg[LOG_SIZE_MAX];

@@ -10,6 +10,7 @@ class MyMqttClient {
 
     MyMqttClient(const char *broker, int port);
     void publish(const char *topic, const char *msg);
+    void subscribeTo(const char *topic);
     
   private:
     const char *_broker;

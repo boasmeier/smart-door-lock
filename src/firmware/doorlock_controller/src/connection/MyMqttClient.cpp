@@ -1,5 +1,6 @@
 #include "MyMqttClient.hpp"
-#include "SerialLogger.hpp"
+#include "../logger/SerialLogger.hpp"
+#include "../config/DoorlockConfig.h"
 
 MyMqttClient::MyMqttClient(const char *broker, int port): m_mqttClient(m_wifiClient), _broker(broker), _port(port) {
   SERIAL_INFO("Attempting to connect to the MQTT broker: %s", _broker);
@@ -16,4 +17,9 @@ void MyMqttClient::publish(const char *topic, const char *msg) {
   m_mqttClient.beginMessage(topic);
   m_mqttClient.print(msg);
   m_mqttClient.endMessage();
+}
+
+void MyMqttClient::subscribeTo(const char *topic) {
+  SERIAL_INFO("Subscribing to topic:  %s", topic);
+  m_mqttClient.subscribe(topic);
 }

@@ -1,5 +1,5 @@
 #include "MqttTopics.hpp"
-#include "DoorlockConfig.h"
+#include "../config/DoorlockConfig.h"
 
 #define DELIMITER "/"
 
