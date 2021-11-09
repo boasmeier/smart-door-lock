@@ -16,9 +16,10 @@ services:
   filebeat:
     build: ./filebeat/
     user: root
-    volumes:
-      - /var/lib/docker:/var/lib/docker:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+  #if we use docker container logs 
+  #volumes:
+    #- /var/lib/docker:/var/lib/docker:ro
+    #- /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   vol-emqx-data:
