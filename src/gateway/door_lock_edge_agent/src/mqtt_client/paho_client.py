@@ -14,12 +14,12 @@ class PahoClient(MqttClient):
         logging.info(f"Connecting PahoClient to {self.address}:{self.port}")
 
         self._client = mqtt.Client()
-
         self._client.on_connect = self.on_connect
         self._client.on_message = self.on_message
         self._client.loop_start()
         self._client.connect(address, port, 60)
-        time.sleep(10)
+
+        time.sleep(2)
 
     def register_callback(self, topic, callback):
         logging.info(f"Register callback topic: {topic}, callback: {callback}")
@@ -34,9 +34,7 @@ class PahoClient(MqttClient):
 
     def on_connect(self, client, userdata, flags, rc):
         logging.info("MqttClient connected")
-        #client.publish("iotlab/doorlocks/2/event/ring", payload="Gateway mqtt client connected", qos=0, retain=False)
         logging.info("MqttClient connected with result code "+str(rc))
-        #client.publish("hallo_test", payload="Hallo test")
 
     def on_message(self, client, userdata, msg):
         logging.info(f"on_message - payload: {msg.topic} - message: {msg.payload}")

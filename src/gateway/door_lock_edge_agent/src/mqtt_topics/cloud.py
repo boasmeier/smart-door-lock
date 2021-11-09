@@ -12,6 +12,7 @@ DEVICEID = "deviceId"
 LOCK = "lock"
 DOOR = "door"
 EVENT = "event"
+ACTION = "action"
 
 DELIMITER = "/"
 WILDCARD = "+"
@@ -31,8 +32,14 @@ def get_site_id(doorlocks_topic: str) -> str:
 def get_device_id(doorlocks_topic: str) -> str:
     return str.split(doorlocks_topic, DELIMITER)[2]
 
+def get_action_type(doorlocks_topic: str) -> str:
+    return str.split(doorlocks_topic, DELIMITER)[4]
+
 def event(site_id: str, event: DoorLockEvent) -> str:
     return site_id + DELIMITER + DOOR_LOCKS + DELIMITER + event.device_id + DELIMITER + EVENT + DELIMITER + event.event_type.name
 
 def state(site_id: str, state: DoorLockState) -> str:
     return site_id + DELIMITER + DOOR_LOCKS + DELIMITER + state.device_id + DELIMITER + STATE + DELIMITER + state.type
+
+def action(site_id: str, device_id: id) -> str:
+    return site_id + DELIMITER + DOOR_LOCKS + DELIMITER + device_id + DELIMITER + ACTION + DELIMITER + WILDCARD

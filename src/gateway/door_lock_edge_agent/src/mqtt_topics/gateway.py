@@ -1,3 +1,5 @@
+from models.actions import DoorLockAction
+
 DOOR_STATE = "doorState"
 LOCK_STATE = "lockState"
 DOOR_LOCKS = "doorlocks"
@@ -8,6 +10,7 @@ DEVICEID = "deviceId"
 LOCK = "lock"
 DOOR = "door"
 EVENT = "event"
+ACTION = "action"
 TELEMETRY = "telemetry"
 GATEWAY = "gateway"
 LOGS = "logs"
@@ -51,3 +54,9 @@ def event(device_id: str) -> str:
     Returns the topic to subscribe to the events of the doorlock with the provided device_id.
     """
     return GATEWAY + DELIMITER + device_id + DELIMITER +  EVENT + DELIMITER + WILDCARD
+
+def action(action: DoorLockAction) -> str:
+    """
+    Returns the topic to publish to the actions of the doorlock with the provided device_id.
+    """
+    return GATEWAY + DELIMITER + action.device_id + DELIMITER +  ACTION + DELIMITER + action.action_type.name
