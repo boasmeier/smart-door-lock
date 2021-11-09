@@ -31,12 +31,11 @@
 #include "src/logger/MqttLogger.hpp"
 #include "src/logger/SerialLogger.hpp"
 
-const int buttonPin = 2;     // the number of the pushbutton pin
-// variables will change:
-int buttonState = 0;         // variable for reading the pushbutton status
+#include "src/door/Lock.hpp"
+#include "src/door/DoorSwitch.hpp"
+#include "src/door/MotionSensor.hpp"
+#include "src/door/Door.hpp"
 
-WifiConnectionHandler *connHandl;
-MyMqttClient *mqtt;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -49,21 +48,22 @@ void setup() {
   // set up connection to gateway
   connectToWifi();
   mqtt = new MyMqttClient(MQTT_HOST, MQTT_PORT);
-  logSuccessfullConnectionToCloud();
+  logSuccessfullConnectionToGateway();
   
   (*mqtt).m_mqttClient.onMessage(onMqttMessage);
-  mqtt->subscribeTo("test/subscribe");
+  mqtt->subscribeTo("gateway/1/action/unlock");
+  mqtt->subscribeTo("gateway/1/action/lock");
   
-  // initialize the pushbutton pin as an input:
-  pinMode(buttonPin, INPUT);
+  // set up door
+  Lock lock(LOCK_LED_PIN, LockState::LOCKED);
+  DoorSwitch doorSwitch(DOOR_SWITCH_PIN);
+  MotionSensor motionSensor(MOTION_SENSOR_PIN);
+  door = new Door(lock, doorSwitch, motionSensor);
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  if (buttonState == HIGH) {
-    // turn LED on:
-    mqtt->publish(MqttTopics::DOOR_STATE, "Ring event");
-  }
+
   mqtt->publish(MqttTopics::DOOR_STATE, "{ \"doorState\": \"open\" }");
   mqtt->publish(MqttTopics::LOCK_STATE, "{ \"lockState\": \"locked\" }");
   
@@ -84,7 +84,7 @@ void connectToWifi() {
   connHandl->connectWPA2(ssid, pass);
 }
 
-void logSuccessfullConnectionToCloud() {
+void logSuccessfullConnectionToGateway() {
   MQTT_INFO(mqtt, "Arduino connected to network with ssid: %s", connHandl->getSsid());
   MQTT_INFO(mqtt, "IP Address of arduino: %s", connHandl->getIp().c_str());
   byte mac[6];
@@ -96,12 +96,4 @@ void logSuccessfullConnectionToCloud() {
   MQTT_INFO(mqtt, "Arduino connected to broker %s:%d", MQTT_HOST, MQTT_PORT);
 }
 
-void onMqttMessage(int messageSize) {
-  String msg = "";
-  String topic = (*mqtt).m_mqttClient.messageTopic();
-  while((*mqtt).m_mqttClient.available()) {
-    char c = (char)(*mqtt).m_mqttClient.read();
-    msg.concat(c);
-  }
-  SERIAL_INFO("onMqttMessage - topic: %s - message: %s", topic.c_str(), msg.c_str());
-}
+

@@ -21,3 +21,7 @@ class MyMqttClient {
     int _count = 0;
   
 };
+
+static MyMqttClient *mqtt;
+
+void onMqttMessage(int messageSize);

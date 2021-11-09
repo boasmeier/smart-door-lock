@@ -9,6 +9,12 @@
 
 #define LOG_SIZE_MAX 128
 
+#define LOCK_LED_PIN 7
+#define DOOR_LED_PIN 8
+#define BTN_PIN 12
+#define DOOR_SWITCH_PIN 13
+#define MOTION_SENSOR_PIN 2
+
 /*
 #define DOOR_STATE "doorState";
 #define LOCK_STATE "lockState";

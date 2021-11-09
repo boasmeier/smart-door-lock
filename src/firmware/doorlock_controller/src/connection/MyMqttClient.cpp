@@ -23,3 +23,13 @@ void MyMqttClient::subscribeTo(const char *topic) {
   SERIAL_INFO("Subscribing to topic:  %s", topic);
   m_mqttClient.subscribe(topic);
 }
+
+void onMqttMessage(int messageSize) {
+  String msg = "";
+  String topic = (*mqtt).m_mqttClient.messageTopic();
+  while((*mqtt).m_mqttClient.available()) {
+    char c = (char)(*mqtt).m_mqttClient.read();
+    msg.concat(c);
+  }
+  SERIAL_INFO("onMqttMessage - topic: %s - message: %s", topic.c_str(), msg.c_str());
+}

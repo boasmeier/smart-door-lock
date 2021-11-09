@@ -2,6 +2,8 @@
 
 #include <WiFiNINA.h>
 
+
+
 class WifiConnectionHandler {
   public:
     WifiConnectionHandler();
@@ -25,3 +27,5 @@ class WifiConnectionHandler {
     const char* ssid;
   
 };
+
+static WifiConnectionHandler *connHandl;

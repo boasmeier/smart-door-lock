@@ -3,6 +3,7 @@
 #include "WifiConnectionHandler.hpp"
 #include "../logger/SerialLogger.hpp"
 
+
 WifiConnectionHandler::WifiConnectionHandler() {
   if(WiFi.status() == WL_NO_MODULE) {
     SERIAL_ERROR("Communication with WiFi module failed!");
