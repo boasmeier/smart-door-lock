@@ -7,7 +7,7 @@
 
 class SerialLogger {
   public:
-    Logger();
+    SerialLogger();
     static void info(const char *fmt, ...);
     static void error(const char *fmt, ...); 
 };
