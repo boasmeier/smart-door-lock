@@ -17,14 +17,16 @@ export class DoorlistService {
 
     return [
       {
-        id: 1,
-        name: 'Main door',
-        status: 'closed'
+        deviceId: "1",
+        doorState: "open",
+        lockState: "unlocked",
+        name: "Main Entrance [1]"
       },
       {
-        id: 2,
-        name: 'Back door',
-        status: 'closed'
+        deviceId: "2",
+        doorState: "open",
+        lockState: "unlocked",
+        name: "Back Entrance [2]"
       }
     ]
 
