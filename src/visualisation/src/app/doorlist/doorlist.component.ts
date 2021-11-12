@@ -2,6 +2,13 @@ import {Component, OnInit} from '@angular/core';
 
 import {DoorlistService} from "./doorlist.service";
 
+interface Door {
+  deviceId: number,
+  name: string,
+  doorState: string,
+  lockState: string
+}
+
 @Component({
   selector: 'app-doorlist',
   templateUrl: './doorlist.component.html',
@@ -9,18 +16,21 @@ import {DoorlistService} from "./doorlist.service";
 })
 export class DoorlistComponent implements OnInit {
 
-  data: any[] = []
+  doors: Door[] = []
 
   constructor(private doorlist: DoorlistService) {
-    // this.doorlist.getData().subscribe(data => {
-    //     this.data = data; // maybe data.json()
-    //   }
-    // )
-    this.data = this.doorlist.getData();
+    this.doorlist.getData<Door>("iotlab").subscribe(data =>
+      this.doors = data
+    );
   }
 
   ngOnInit(): void {
     // empty
   }
 
+  onOpenBtnClick(deviceId: number) {
+    console.log("Opening lock with id: ", deviceId);
+    this.doorlist.sendAction("iotlab", deviceId);
+    window.location.reload();
+  }
 }

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 
 // REST
 import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -11,24 +12,13 @@ export class DoorlistService {
   constructor(private http: HttpClient) {
   }
 
-  getData() {
-    let url = "localhost:5001/doorlocks/iotlab/";
-    // return this.http.get(url);
+  getData<T>(siteId: string): Observable<T[]> {
+    let url = `http://localhost:5001/doorlocks/${siteId}`;
+    return this.http.get<T[]>(url);
+  }
 
-    return [
-      {
-        deviceId: "1",
-        doorState: "open",
-        lockState: "unlocked",
-        name: "Main Entrance [1]"
-      },
-      {
-        deviceId: "2",
-        doorState: "open",
-        lockState: "unlocked",
-        name: "Back Entrance [2]"
-      }
-    ]
-
+  sendAction(siteId: string, deviceId: number) {
+    let url = `http://localhost:5001/doorlocks/${siteId}/${deviceId}/action`;
+    this.http.post<any>(url, {action: 'unlock'}).subscribe(); // .pipe()?
   }
 }
