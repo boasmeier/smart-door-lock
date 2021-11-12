@@ -12,9 +12,9 @@ export class DoorlistService {
   constructor(private http: HttpClient) {
   }
 
-  getData<T>(siteId: string): Observable<T[]> {
+  getData<T>(siteId: string): Observable<T> {
     let url = `http://localhost:5001/doorlocks/${siteId}`;
-    return this.http.get<T[]>(url);
+    return this.http.get<T>(url);
   }
 
   sendAction(siteId: string, deviceId: number) {

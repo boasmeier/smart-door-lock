@@ -19,7 +19,7 @@ export class DoorlistComponent implements OnInit {
   doors: Door[] = []
 
   constructor(private doorlist: DoorlistService) {
-    this.doorlist.getData<Door>("iotlab").subscribe(data =>
+    this.doorlist.getData<Door[]>("iotlab").subscribe(data =>
       this.doors = data
     );
   }
