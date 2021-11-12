@@ -12,7 +12,7 @@ export class DoorlistService {
   }
 
   getData() {
-    let url = "https://url.to.the.rest.api";
+    let url = "localhost:5001/doorlocks/iotlab/";
     // return this.http.get(url);
 
     return [
