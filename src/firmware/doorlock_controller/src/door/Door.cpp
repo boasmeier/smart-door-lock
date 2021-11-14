@@ -1,18 +1,24 @@
 #include "Door.hpp"
 #include "Lock.hpp"
 #include "DoorSwitch.hpp"
+#include "DoorBell.hpp"
 #include "MotionSensor.hpp"
 
-Door::Door(Lock lock, DoorSwitch doorSwitch, MotionSensor motionSensor) :
+Door::Door(Lock lock, DoorSwitch doorSwitch, DoorBell doorBell, MotionSensor motionSensor) :
     m_lock(lock),
     m_doorSwitch(doorSwitch),
+    m_doorBell(doorBell),
     m_motionSensor(motionSensor) 
 {
 
 }
 
-LockState Door::getLockState() {
+DoorLockState Door::getLockState() {
     return m_lock.getState();
+}
+
+DoorBellState Door::getDoorBellState() {
+    return m_doorBell.getState();
 }
 
 DoorSwitchState Door::getDoorSwitchState() {
@@ -21,4 +27,16 @@ DoorSwitchState Door::getDoorSwitchState() {
 
 MotionState Door::getMotionState() {
     return m_motionSensor.getState();
+}
+
+void Door::toggleLock() {
+    m_lock.toggle();
+}
+
+void Door::unlock() {
+    m_lock.unlock();
+}
+
+void Door::lock() {
+    m_lock.lock();
 }
