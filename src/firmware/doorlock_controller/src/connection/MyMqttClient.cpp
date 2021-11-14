@@ -1,4 +1,5 @@
 #include "MyMqttClient.hpp"
+#include "MqttMessageHandler.hpp"
 #include "../logger/SerialLogger.hpp"
 #include "../config/DoorlockConfig.h"
 
@@ -32,4 +33,5 @@ void onMqttMessage(int messageSize) {
     msg.concat(c);
   }
   SERIAL_INFO("onMqttMessage - topic: %s - message: %s", topic.c_str(), msg.c_str());
+  MqttMessageHandler::handleMessage(topic, msg);
 }
