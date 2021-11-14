@@ -10,4 +10,8 @@ class DoorSwitch {
         DoorSwitch(int pin);
         DoorSwitchState getState();
 };
+
+void handleDoorOpened();
+void handleDoorClosed();
+void triggerIntrusionEvent();
     
