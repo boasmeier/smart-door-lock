@@ -54,6 +54,12 @@ class RedisDatabase(Database):
         """
         self._client.set(self._get_lockstate_key(siteId, deviceId), json.dumps({definitions.LOCK_STATE: lockState.name}))
 
+    def set_name(self, siteId: str, deviceId: str, name: str):
+        """
+        Sets the name for the passed door lock.
+        """
+        self._client.set(self._get_name_key(siteId, deviceId), json.dumps({definitions.NAME: name}))
+
     def _base_key(self, site_id: str, device_id: str) -> str:
         """
         Returns the base key: [site_id]:doorlocks:[device_id]

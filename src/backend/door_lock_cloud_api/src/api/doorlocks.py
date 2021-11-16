@@ -53,3 +53,14 @@ def post_doorlock_action(site_id: str, device_id: str, body: Dict):
 
     else:
         return "Doorlock not found", 404
+
+def put_device_from_site(site_id: str, device_id: str, body: Dict):
+    """
+    Sets the new doorlock with name in this system.
+    """
+    if definitions.NAME not in body:
+        return f"Missing payload {definitions.NAME}", 400
+
+    db.set_name(site_id, device_id, body[definitions.NAME])
+
+    return f"Updated Name to {body[definitions.NAME]}", 200

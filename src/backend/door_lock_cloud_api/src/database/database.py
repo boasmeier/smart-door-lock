@@ -40,4 +40,11 @@ class Database():
         Sets the lockState for the passed door lock.
         """
         pass
+
+
+    def set_name(self, siteId: str, deviceId: str, name: str):
+        """
+        Sets the name for the passed door lock.
+        """
+        pass
     
