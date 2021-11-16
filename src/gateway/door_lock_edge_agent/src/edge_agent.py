@@ -8,7 +8,7 @@ from cloud.cloud_publisher import CloudPublisher
 from edge_logging.log_handler import PythonLogHandler
 from edge_logging.log_manager import LogManager
 from edge_logging.log_provider import ArduinoMqttLogProvider
-from models.bell import BellHandler, DummyBell
+from models.bell import BellHandler, DummyBell, PiezoBell
 from mqtt_client.client import MqttClient
 from mqtt_client.paho_client import PahoClient
 from settings import *
@@ -55,4 +55,4 @@ class EdgeAgent():
         self.arduino_publisher = ArduinoPublisher(self.mqtt_gateway_client)
 
     def setup_bell(self):
-        self.bell_handler = BellHandler(DummyBell())
+        self.bell_handler = BellHandler(PiezoBell())
