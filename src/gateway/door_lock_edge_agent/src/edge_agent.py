@@ -55,4 +55,4 @@ class EdgeAgent():
         self.arduino_publisher = ArduinoPublisher(self.mqtt_gateway_client)
 
     def setup_bell(self):
-        self.bell_handler = BellHandler(PiezoBell())
+        self.bell_handler = BellHandler(PiezoBell(12))
