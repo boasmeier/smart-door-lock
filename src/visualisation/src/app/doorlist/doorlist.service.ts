@@ -9,7 +9,7 @@ import {Observable} from "rxjs";
 })
 export class DoorlistService {
 
-  baseUrl = "http://localhost:5001/doorlocks"
+  baseUrl = "http://localhost:5004/doorlocks"
 
   constructor(private http: HttpClient) {
   }

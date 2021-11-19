@@ -1,3 +1,7 @@
-td {
-  padding: 16px 32px;
+.doorlist-table {
+  width: 100%;
+}
+
+.mat-column-button {
+  width: 70px;
 }
