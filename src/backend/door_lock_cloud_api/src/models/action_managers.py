@@ -32,4 +32,4 @@ class MqttDoorLockActionManager():
         Executes the passed DoorLockAction over MQTT.
         """
         self.mqtt_client.publish(tp.doorlock_action(action), action.message)
-
+        self.db.set_doorlock_action(action)

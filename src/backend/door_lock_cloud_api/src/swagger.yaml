@@ -102,6 +102,43 @@ paths:
 
 
   /doorlocks/{site_id}/{device_id}/action:
+    get:
+      summary: "Returns all the actionfor the provided device id."
+      operationId: "api.doorlocks.get_doorlock_actions"
+      tags:
+        - "Door Locks Site"
+      description: "Returns all actions for the door lock."
+      parameters:
+        - name: site_id
+          in: path
+          description: site Id
+          required: true
+          schema:
+            type: string
+        - name: device_id
+          in: path
+          description: device Id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: "Successful get doorlocks actions operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  datetime:
+                    type: string
+                  action:
+                    type: string
+                  message:
+                    type: string
+                  source:
+                    type: string
+    
     post:
       summary: "Executes an action for the provided device id."
       operationId: "api.doorlocks.post_doorlock_action"

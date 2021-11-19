@@ -3,7 +3,7 @@ services:
   doorlock-cloud-api:
     build: ./door_lock_cloud_api/
     ports:
-      - "5001:5001"
+      - "5004:5001"
     restart: always
     depends_on:
       - "mqtt-broker"
