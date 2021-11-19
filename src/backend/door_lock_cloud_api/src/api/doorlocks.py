@@ -1,7 +1,7 @@
 from models.action_managers import MqttDoorLockActionManager, DoorLockActionManager
 from mqtt_client.client import MqttClient
 from mqtt_client.paho_client import PahoClient
-from models.actions import DoorLockActionType, DoorLockAction
+from models.actions import ActionSource, DoorLockActionType, DoorLockAction
 from models.doorlock import DoorLock, DoorState, LockState
 from database.database import Database
 from database.redis_database import RedisDatabase
@@ -44,7 +44,7 @@ def post_doorlock_action(site_id: str, device_id: str, body: Dict):
 
         try:
             doorlock_action_type: DoorLockActionType = DoorLockActionType[action_str]
-            doorlock_action_manager.execute_action(DoorLockAction(doorlock_action_type, "", doorlock))
+            doorlock_action_manager.execute_action(DoorLockAction(doorlock_action_type, "", doorlock, source=ActionSource.api))
             return f"DoorLockAction: {doorlock_action_type.name} for {doorlock.to_str()} in progress", 200
 
         except Exception as e:
@@ -53,3 +53,29 @@ def post_doorlock_action(site_id: str, device_id: str, body: Dict):
 
     else:
         return "Doorlock not found", 404
+
+def get_doorlock_actions(site_id: str, device_id: str):
+    """
+    Returns all past actions for a doorlock.
+    """
+    if db.does_doorlock_exist(site_id, device_id):
+        try:
+            return [action.to_json() for action in db.get_doorlock_actions(site_id, device_id)], 200
+
+        except Exception as e:
+            logging.error(f"doorlocks: unable to parse action {e}")
+            return f"actions not able to parse", 404
+
+    else:
+        return "Doorlock not found", 404
+
+def put_device_from_site(site_id: str, device_id: str, body: Dict):
+    """
+    Sets the new doorlock with name in this system.
+    """
+    if definitions.NAME not in body:
+        return f"Missing payload {definitions.NAME}", 400
+
+    db.set_name(site_id, device_id, body[definitions.NAME])
+
+    return f"Updated Name to {body[definitions.NAME]}", 200

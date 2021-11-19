@@ -1,5 +1,5 @@
 import logging
-from models.actions import DoorLockAction, DoorLockActionType
+from models.actions import ActionSource, DoorLockAction, DoorLockActionType
 from models.action_managers import DoorLockActionManager
 from models.doorlock import DoorLock
 from models.events import DoorLockEvent, DoorLockEventType
@@ -73,10 +73,9 @@ class TelegramService:
 
     def main_handler(self, update, context):
         if update.message.text == "Yes":
-            # TODO: Send Unlock Action
             logging.info(f"User pressed open the door {self.last_doorlock.to_str()}")
             doorlock: DoorLock = self.last_doorlock
-            self.door_lock_action_manager.execute_action(DoorLockAction(action_type=DoorLockActionType.unlock, message={}, doorlock=self.last_doorlock))
+            self.door_lock_action_manager.execute_action(DoorLockAction(action_type=DoorLockActionType.unlock, message={}, doorlock=self.last_doorlock, source=ActionSource.telegram))
             update.message.reply_text(f'Okay, I will open the door {self.last_doorlock.name}!', reply_markup=ReplyKeyboardRemove())
             self.last_doorlock = None
 

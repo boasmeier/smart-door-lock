@@ -10,4 +10,6 @@ class MotionSensor {
         MotionSensor(int pin);
         MotionState getState();
 };
+
+void handleMovementDetection();
     

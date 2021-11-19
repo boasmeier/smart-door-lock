@@ -5,7 +5,7 @@ import time
 
 class PahoClient(MqttClient):
     def __init__(self, address: str, port: int):
-        time.sleep(2)
+        time.sleep(15)
         logging.info(f"Connecting PahoClient to {address}:{port}")
         self.address = address
         self.port = port
