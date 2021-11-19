@@ -32,6 +32,7 @@ class PiezoBell(Bell):
     """
     def __init__(self, pin: int) -> None:
         self.pin = pin
+        GPIO.setmode(GPIO.BOARD)
 
     def ring(self, time_in_s: int):
         """
@@ -42,18 +43,24 @@ class PiezoBell(Bell):
         ring.start()
 
     def _ring(self, time_in_s: int):
-        GPIO.setup(self.pin, GPIO.OUT)  
-        pwm = GPIO.PWM(self.pin, 2000)   
-        pwm.start(50)                      
-        time.sleep(time_in_s//2)
-        pwm.stop()                        
-        GPIO.cleanup()
+        f_ding = 600
+        f_dong = (f_ding * 2) // 3
 
-        pwm = GPIO.PWM(self.pin, 1000)   
+        GPIO.setmode(GPIO.BOARD)        
+        GPIO.setup(self.pin, GPIO.OUT)
+        pwm = GPIO.PWM(self.pin, f_ding)   
         pwm.start(50)                      
         time.sleep(time_in_s//2)
-        pwm.stop()                        
+        pwm.stop() 
         GPIO.cleanup()                     
+
+        GPIO.setmode(GPIO.BOARD)        
+        GPIO.setup(self.pin, GPIO.OUT)
+        pwm2 = GPIO.PWM(self.pin, f_dong)   
+        pwm2.start(50)                      
+        time.sleep(time_in_s//2)
+        pwm2.stop() 
+        GPIO.cleanup()                                     
 
 class BellHandler():
     def __init__(self, bell: Bell):
