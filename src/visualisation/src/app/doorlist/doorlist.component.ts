@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 
-import {DoorlistService} from "./doorlist.service";
+import {DoorlockService} from "../doorlock_service/doorlock.service";
 
 // Toast Notifications
 import {ToastrService} from "ngx-toastr";
@@ -23,7 +23,7 @@ export class DoorlistComponent implements OnInit {
   interval = 5000;
   displayedColumns: string[] = ['deviceId', 'name', 'doorState', 'lockState', 'button'];
 
-  constructor(private doorListService: DoorlistService,
+  constructor(private doorListService: DoorlockService,
               private toastr: ToastrService) {
     this.interval = setInterval(() => {
       this.refresh();
@@ -56,7 +56,7 @@ export class DoorlistComponent implements OnInit {
 
   onOpenBtnClick(deviceId: number) {
     console.log("Sending request to open lock with id: ", deviceId);
-    this.doorListService.sendAction("iotlab", deviceId).subscribe({
+    this.doorListService.sendAction("iotlab", deviceId, {action: 'unlock'}).subscribe({
       next: (msg) => {
         console.log(msg);
       },
