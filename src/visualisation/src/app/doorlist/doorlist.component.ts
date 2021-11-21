@@ -43,9 +43,15 @@ export class DoorlistComponent implements OnInit {
   }
 
   refresh() {
-    this.doorListService.getData<Door[]>("iotlab").subscribe(data =>
-      this.doors = data
-    );
+    this.doorListService.getData<Door[]>("iotlab").subscribe({
+      next: data => {
+        this.doors = data
+      },
+      error: error => {
+        this.toastr.error("Unable to reach server");
+        console.error(error);
+      }
+    });
   }
 
   onOpenBtnClick(deviceId: number) {
