@@ -22,6 +22,7 @@ class DoorLockEventManager():
         self._handles.append(handle)
 
     def on_event(self, mosq, obj, msg):
+        logging.info(f"DoorLockEventManager - on_event {msg}")
         site_id: str = tp.get_site_id(msg.topic)
         device_id: str = tp.get_device_id(msg.topic)
         if not self.db.does_doorlock_exist(site_id, device_id):
@@ -35,8 +36,9 @@ class DoorLockEventManager():
 
             doorlock: DoorLock = self.db.get_doorlock(site_id, device_id)
 
-            event: DoorLockEvent = DoorLockEvent(event_type, msg.payload, doorlock)
+            event: DoorLockEvent = DoorLockEvent(event_type, msg.payload.decode("utf-8"), doorlock)
             
+            self.db.set_doorlock_event(event)
+
             for handle in self._handles:
                 handle(event)
-

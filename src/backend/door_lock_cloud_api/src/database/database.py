@@ -1,4 +1,5 @@
 from typing import List
+from models.events import DoorLockEvent
 from models.actions import DoorLockAction
 from models.doorlock import DoorLock, DoorState, LockState
 
@@ -59,4 +60,17 @@ class Database():
         Returns all the doorlock actions in the database with the passed siteId and deviceId.
         """
         pass
+
+    def set_doorlock_event(self, event: DoorLockEvent) :
+        """
+        Stores a doorlock event for a certain doorlock in the database.
+        """
+        pass
+    
+    def get_doorlock_events(self, siteId: str, deviceId: str) -> List[DoorLockEvent]:
+        """
+        Returns all the doorlock events in the database with the passed siteId and deviceId.
+        """
+        pass
+    
     
