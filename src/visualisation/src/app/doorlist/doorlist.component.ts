@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 
-import {DoorlistService} from "./doorlist.service";
+import {DoorlockService} from "../doorlock_service/doorlock.service";
+
+// Toast Notifications
 import {ToastrService} from "ngx-toastr";
 
-interface Door {
+export interface Door {
   deviceId: number,
   name: string,
   doorState: string,
@@ -19,8 +21,9 @@ export class DoorlistComponent implements OnInit {
 
   doors: Door[] = []
   interval = 5000;
+  displayedColumns: string[] = ['deviceId', 'name', 'doorState', 'lockState', 'button'];
 
-  constructor(private doorListService: DoorlistService,
+  constructor(private doorListService: DoorlockService,
               private toastr: ToastrService) {
     this.interval = setInterval(() => {
       this.refresh();
@@ -40,14 +43,20 @@ export class DoorlistComponent implements OnInit {
   }
 
   refresh() {
-    this.doorListService.getData<Door[]>("iotlab").subscribe(data =>
-      this.doors = data
-    );
+    this.doorListService.getData<Door[]>("iotlab").subscribe({
+      next: data => {
+        this.doors = data
+      },
+      error: error => {
+        this.toastr.error("Unable to reach server");
+        console.error(error);
+      }
+    });
   }
 
   onOpenBtnClick(deviceId: number) {
-    console.log("Opening lock with id: ", deviceId);
-    this.doorListService.sendAction("iotlab", deviceId).subscribe({
+    console.log("Sending request to open lock with id: ", deviceId);
+    this.doorListService.sendAction("iotlab", deviceId, {action: 'unlock'}).subscribe({
       next: (msg) => {
         console.log(msg);
       },

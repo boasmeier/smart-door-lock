@@ -7,9 +7,9 @@ import {Observable} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class DoorlistService {
+export class DoorlockService {
 
-  baseUrl = "http://localhost:5001/doorlocks"
+  baseUrl = "http://localhost:5004/doorlocks"
 
   constructor(private http: HttpClient) {
   }
@@ -19,8 +19,8 @@ export class DoorlistService {
     return this.http.get<T>(url);
   }
 
-  sendAction(siteId: string, deviceId: number) {
+  sendAction(siteId: string, deviceId: number, body: any) {
     let url = this.baseUrl + `/${siteId}/${deviceId}/action`;
-    return this.http.post<any>(url, {action: 'unlock'});
+    return this.http.post<any>(url, body);
   }
 }

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DoorlistService } from './doorlist.service';
+import { DoorlockService } from '../doorlock_service/doorlock.service';
 
 describe('DoorlistService', () => {
-  let service: DoorlistService;
+  let service: DoorlockService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DoorlistService);
+    service = TestBed.inject(DoorlockService);
   });
 
   it('should be created', () => {

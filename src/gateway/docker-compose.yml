@@ -14,12 +14,16 @@ services:
       - vol-emqx-log:/opt/emqx/log
 
   filebeat:
-    build: ./filebeat/
+    #build: ./filebeat/
+    image: docker.elastic.co/beats/filebeat:7.15.1
     user: root
-  #if we use docker container logs 
-  #volumes:
-    #- /var/lib/docker:/var/lib/docker:ro
-    #- /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - backend_backend
+    #if we use docker container logs
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   vol-emqx-data:
@@ -28,3 +32,7 @@ volumes:
     name: bar-emqx-etc
   vol-emqx-log:
     name: bar-emqx-log
+
+networks:
+  backend_backend:
+    external: true
