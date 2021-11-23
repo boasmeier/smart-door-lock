@@ -5,6 +5,8 @@ import {DoorlockService} from "../doorlock_service/doorlock.service";
 // Toast Notifications
 import {ToastrService} from "ngx-toastr";
 
+// Materials
+
 export interface Door {
   deviceId: number,
   name: string,
@@ -19,17 +21,31 @@ export interface Door {
 })
 export class DoorlistComponent implements OnInit {
 
-  doors: Door[] = []
+  doors: Door[] = [
+    {
+      deviceId: 1,
+      doorState: "open",
+      lockState: "unlocked",
+      name: "Main Entrance [1]"
+    },
+    {
+      deviceId: 2,
+      doorState: "closed",
+      lockState: "locked",
+      name: "Office [2]"
+    }
+  ]
+
   interval = 5000;
   displayedColumns: string[] = ['deviceId', 'name', 'doorState', 'lockState', 'button'];
 
   constructor(private doorListService: DoorlockService,
               private toastr: ToastrService) {
-    this.interval = setInterval(() => {
-      this.refresh();
-    }, this.interval);
+    // this.interval = setInterval(() => {
+    //   this.refresh();
+    // }, this.interval);
 
-    this.refresh();
+    // this.refresh();
   }
 
   ngOnInit(): void {
