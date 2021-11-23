@@ -1,0 +1,9 @@
+nav span {
+  margin-left: 20px;
+  color: white;
+}
+
+nav ul li a {
+  color: white;
+  font-size: 1.3em;
+}

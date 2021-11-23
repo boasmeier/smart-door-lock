@@ -1,6 +1,10 @@
 .doorlist-wrapper {
-  margin-left: 30%;
-  width: 40%;
+  width: 960px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
 }
 
 .doorlist-table {

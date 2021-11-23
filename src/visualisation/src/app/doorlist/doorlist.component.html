@@ -1,6 +1,6 @@
 <div class="doorlist-wrapper">
+  <h1>Doorlist</h1>
   <table mat-table [dataSource]="doors" class="mat-elevation-z8 doorlist-table">
-    <caption><h1>Doorlist</h1></caption>
     <ng-container matColumnDef="deviceId">
       <th mat-header-cell *matHeaderCellDef scope="col"> ID </th>
       <td mat-cell *matCellDef="let door"> {{door.deviceId}} </td>
