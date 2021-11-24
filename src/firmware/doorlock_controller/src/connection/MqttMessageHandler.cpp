@@ -3,8 +3,10 @@
 #include "MqttMessageHandler.hpp"
 #include "MqttTopics.hpp"
 #include "../door/Door.hpp"
+#include "../logger/SerialLogger.hpp"
 
 void MqttMessageHandler::handleMessage(String topic, String msg) {
+    SERIAL_INFO("onMqttMessage - topic: %s - message: %s", topic.c_str(), msg.c_str());
     if(topic == MqttTopics::UNLOCK) {
         handleUnlock();
     }
