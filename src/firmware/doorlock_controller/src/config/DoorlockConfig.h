@@ -5,23 +5,25 @@
 
 //#define MQTT_HOST "192.168.21.112"   // ip/hostname of gateway here
 #define MQTT_HOST "192.168.0.222"      // notebook @home boas 
+//#define MQTT_HOST "raspberry31"
+//#define MQTT_HOST "192.168.31.97"
 #define MQTT_PORT 1884
+
+//#define MQTT_HOST "broker.emqx.io" 
+//#define MQTT_PORT 1883
+
+
+
 
 #define LOG_SIZE_MAX 128
 
+// definition of used gpio pins
 #define LOCK_LED_PIN 7
-#define DOOR_LED_PIN 8
-#define BTN_PIN 12
-#define DOOR_SWITCH_PIN 13
+#define DOOR_LED_PIN_RED 8
+#define DOOR_LED_PIN_GREEN 9
+#define DOORBELL_PIN 12
+#define DOOR_SWITCH_PIN_CLOSE 10
+#define DOOR_SWITCH_PIN_OPEN 13
 #define MOTION_SENSOR_PIN 2
 
-/*
-#define DOOR_STATE "doorState";
-#define LOCK_STATE "lockState";
-#define DOOR_LOCKS "doorlocks";
-#define STATE "state";
-#define DEVICEID "deviceId";
-#define LOCK "lock";
-#define DOOR "door";
-#define EVENT "event";
-*/
+

@@ -21,23 +21,32 @@
 #include "src/card_reader/HumanMachineInterface.hpp"
 #include "src/card_reader/Led.hpp"
 
+// define global variables in .ino file inside setup function
+WifiConnectionHandler *connHandl;
+MyMqttClient *mqtt;
+CardReader *cardReader;
+HumanMachineInterface *cardReaderHmi;
+Door *door;
+
 // the setup function runs once when you press reset or power the board
 void setup()
 {
     // initialize serial connection
-    Serial.begin(115200);
+    Serial.begin(9600);
     while (!Serial)
     {
         continue;
     }
 
+
     // set up connection to gateway
     connectToWifi();
     mqtt = new MyMqttClient(MQTT_HOST, MQTT_PORT);
     logSuccessfullConnectionToGateway();
-    (*mqtt).m_mqttClient.onMessage(onMqttMessage);
+    mqtt->m_mqttClient.onMessage(onMqttMessage);
     mqtt->subscribeTo(MqttTopics::UNLOCK);
     mqtt->subscribeTo(MqttTopics::LOCK);
+
 
     // set up card reader
     cardReader = new CardReader();
@@ -45,13 +54,18 @@ void setup()
     Led redLed(DOOR_LED_PIN_RED, String("red"));
     cardReaderHmi = new HumanMachineInterface(greenLed, redLed);
 
+
     // set up door
     Lock lock(LOCK_LED_PIN, DoorLockState::LOCKED);
-    DoorSwitch doorSwitch(DOOR_SWITCH_PIN);
+    DoorSwitch doorSwitch(DOOR_SWITCH_PIN_OPEN, DOOR_SWITCH_PIN_CLOSE);
     DoorBell doorBell(DOORBELL_PIN);
     MotionSensor motionSensor(MOTION_SENSOR_PIN);
     door = new Door(lock, doorSwitch, doorBell, motionSensor);
+    
+
 }
+
+
 
 // the loop function runs over and over again forever
 void loop()
@@ -88,8 +102,16 @@ void loop()
     }
     SERIAL_INFO("\n\n");
     */
+    mqtt->poll();
     cardReader->read();
-    delay(100);
+    door->handleDoorBellRingEvent();
+    door->handleDoorSwitchOpenedEvent();
+    door->handleDoorSwitchClosedEvent();
+    door->handleMotionDetectionEvent();
+    //MQTT_INFO(mqtt, "Arduino connected to broker %s:%d", MQTT_HOST, MQTT_PORT);
+    //connHandl->scanNetworks();
+    delay(3000);
+    mqtt->handleMqttMessage();
 }
 
 void connectToWifi()

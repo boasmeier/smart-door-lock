@@ -8,7 +8,7 @@ Door::Door(Lock lock, DoorSwitch doorSwitch, DoorBell doorBell, MotionSensor mot
     m_lock(lock),
     m_doorSwitch(doorSwitch),
     m_doorBell(doorBell),
-    m_motionSensor(motionSensor) 
+    m_motionSensor(motionSensor)
 {
 
 }
@@ -21,12 +21,28 @@ DoorBellState Door::getDoorBellState() {
     return m_doorBell.getState();
 }
 
+void Door::handleDoorBellRingEvent() {
+    m_doorBell.handleRingEvent();
+}
+
 DoorSwitchState Door::getDoorSwitchState() {
     return m_doorSwitch.getState();
 }
 
+void Door::handleDoorSwitchOpenedEvent() {
+    m_doorSwitch.handleDoorOpenedEvent();
+}
+
+void Door::handleDoorSwitchClosedEvent() {
+    m_doorSwitch.handleDoorClosedEvent();
+}
+
 MotionState Door::getMotionState() {
     return m_motionSensor.getState();
+}
+
+void Door::handleMotionDetectionEvent() {
+    m_motionSensor.handleMotionDetection();
 }
 
 void Door::toggleLock() {

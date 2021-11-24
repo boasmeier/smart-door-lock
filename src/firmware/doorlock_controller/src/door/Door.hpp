@@ -15,14 +15,26 @@ class Door {
 
     public:
         Door(Lock lock, DoorSwitch doorSwitch, DoorBell doorBell, MotionSensor motionSensor);
+
         DoorLockState getLockState();
-        DoorSwitchState getDoorSwitchState();
-        DoorBellState getDoorBellState();
-        MotionState getMotionState();
         void toggleLock();
         void unlock();
         void lock();
+
+        DoorSwitchState getDoorSwitchState();
+        void handleDoorSwitchOpenedEvent();
+        void handleDoorSwitchClosedEvent();
+
+        DoorBellState getDoorBellState();
+        void handleDoorBellRingEvent();
+
+        MotionState getMotionState();
+        void handleMotionDetectionEvent();
+
+        Door *getDoor();
 };
 
-static Door *door;
+extern Door *door;
+void sendTestMessage();
+
     

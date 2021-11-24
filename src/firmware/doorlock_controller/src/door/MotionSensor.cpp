@@ -7,7 +7,7 @@
 
 MotionSensor::MotionSensor(int pin) : m_pin(pin) {
     pinMode(m_pin, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(m_pin), handleMovementDetection, RISING);
+    attachInterrupt(digitalPinToInterrupt(m_pin), motionDetectionISR, RISING);
 }
 
 MotionState MotionSensor::getState() {
@@ -15,7 +15,15 @@ MotionState MotionSensor::getState() {
     return state ? MotionState::ACTIVITY : MotionState::NO_ACTIVITY;
 }
 
-void handleMovementDetection() {
+void MotionSensor::handleMotionDetection() {
+    if(motionDetectedEventCount > 0) {
+        motionDetectedEventCount--;
+        SERIAL_INFO("Movement detected");
+    }
+    SERIAL_INFO("Motion detection event count: %d", motionDetectedEventCount);
+}
+
+void motionDetectionISR() {
     // TODO: Check wheter it is suspicious movement
-    SERIAL_INFO("Movement detected");
+    motionDetectedEventCount++;
 }
