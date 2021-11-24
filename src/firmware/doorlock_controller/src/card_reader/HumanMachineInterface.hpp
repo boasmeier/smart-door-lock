@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HUMAN_MACHINE_INTERFACE_H
+#define HUMAN_MACHINE_INTERFACE_H
 
 #include "Led.hpp"
 
@@ -15,4 +16,6 @@ class HumanMachineInterface {
         int m_blinkFreq = 2;  // hz
 };
 
-static HumanMachineInterface *cardReaderHmi;
+extern HumanMachineInterface *cardReaderHmi;
+
+#endif 
