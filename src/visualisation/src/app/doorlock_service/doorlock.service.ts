@@ -19,6 +19,14 @@ export class DoorlockService {
     return this.http.get<T>(url);
   }
 
+  getDeviceData<T>(siteId: string, deviceId: number, addition: string = '') {
+    if (addition != '') {
+      addition = `/${addition}`
+    }
+    let url = this.baseUrl + `/${siteId}/${deviceId}${addition}`;
+    return this.http.get<T>(url);
+  }
+
   sendAction(siteId: string, deviceId: number, body: any) {
     let url = this.baseUrl + `/${siteId}/${deviceId}/action`;
     return this.http.post<any>(url, body);
