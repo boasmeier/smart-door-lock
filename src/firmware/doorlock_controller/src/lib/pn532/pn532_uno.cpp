@@ -44,7 +44,7 @@
 // This indicates if the bits read/write should be reversed
 #define PN532_SPI_HARDWARE_LSB
 
-#define PN532_NSS                       (4)
+#define PN532_NSS                       (11)
 #define PN532_REQ                       (2)
 #define PN532_RST                       (3)
 
@@ -129,13 +129,13 @@ bool PN532_SPI_WaitReady(uint32_t timeout) {
 int PN532_SPI_Wakeup(void) {
     // Send any special commands/data to wake up PN532
     uint8_t data[] = {0x00};
-    delay(1000);
+    //delay(1000);
     digitalWrite(PN532_NSS, LOW);
     delay(2); // T_osc_start
     spi_rw(data, 1);
     delay(2); // T_osc_start
     digitalWrite(PN532_NSS, HIGH);
-    delay(1000);
+    //delay(1000);
     return PN532_STATUS_OK;
 }
 
@@ -148,7 +148,7 @@ void PN532_SPI_Init(PN532* pn532) {
     pn532->wait_ready = PN532_SPI_WaitReady;
     pn532->wakeup = PN532_SPI_Wakeup;
     pn532->log = PN532_Log;
-    Serial.begin(115200);
+    //Serial.begin(9600);
     pinMode(PN532_REQ, OUTPUT);
     pinMode(PN532_RST, OUTPUT);
     pinMode(PN532_NSS, OUTPUT);
