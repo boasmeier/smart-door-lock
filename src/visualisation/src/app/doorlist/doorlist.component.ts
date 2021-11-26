@@ -86,16 +86,37 @@ export class DoorlistComponent implements OnInit {
     }
   }
 
-  onOpenBtnClick(deviceId: number) {
-    console.log("Sending request to open lock with id: ", deviceId);
-    this.doorListService.sendAction("iotlab", deviceId, {action: 'unlock'}).subscribe({
-      next: (msg) => {
-        console.log(msg);
-      },
-      error: (error) => {
-        this.toastr.error("There occured an error while sending the request");
-        console.error(error);
+  handleBtnClick(deviceId: number) {
+    // Check if the door is locked or not
+    let locked = this.doors.some(function (door) {
+      if (door['deviceId'] == deviceId) {
+        return door['lockState'] == "locked";
       }
+      return null;
     });
+
+    if (locked) { // Unlock if it is locked
+      console.log("Sending request to unlock the lock with id: ", deviceId);
+      this.doorListService.sendAction("iotlab", deviceId, {action: 'unlock'}).subscribe({
+        next: (msg) => {
+          console.log(msg);
+        },
+        error: (error) => {
+          this.toastr.error("There occured an error while sending the request");
+          console.error(error);
+        }
+      });
+    } else { // Lock if it is unlocked
+      console.log("Sending request to lock the lock with id: ", deviceId);
+      this.doorListService.sendAction("iotlab", deviceId, {action: 'lock'}).subscribe({
+        next: (msg) => {
+          console.log(msg);
+        },
+        error: (error) => {
+          this.toastr.error("There occured an error while sending the request");
+          console.error(error);
+        }
+      });
+    }
   }
 }
