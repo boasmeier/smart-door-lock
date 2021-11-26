@@ -1,7 +1,11 @@
-# run the following commands in the console to start the docker container:
-# ng build --prod
-# docker-compose up --build -d
+FROM node:14.17.0-alpine as build-step
+RUN mkdir -p /app
+WORKDIR /app
+COPY package.json /app
+RUN npm install
+COPY . /app
+RUN npm run build -- --prod
 
 FROM nginx:alpine
-COPY /dist/iot-frontend /usr/share/nginx/html
+COPY --from=build-step /app/dist/iot-frontend /usr/share/nginx/html
 EXPOSE 80
