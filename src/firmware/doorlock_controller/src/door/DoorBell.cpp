@@ -24,12 +24,19 @@ void DoorBell::handleRingEvent() {
         SERIAL_INFO("Ring event");
         MQTT_INFO(mqtt, "Ring event");
         mqtt->publish(MqttTopics::RING_EVENT, "");
+        SERIAL_INFO("Door bell event count: %d", doorbellEventCount);
     }
-    SERIAL_INFO("Door bell event count: %d", doorbellEventCount);
+    //SERIAL_INFO("Door bell event count: %d", doorbellEventCount);
 }
 
+static volatile unsigned long previousTime = 0;
+static volatile unsigned long enterTime = 0;
 void ringEventISR() {
-    doorbellEventCount++;
+    enterTime = millis();
+    if(enterTime-previousTime > 200) {
+        doorbellEventCount++;
+        previousTime = enterTime;
+    }
 }
 
 

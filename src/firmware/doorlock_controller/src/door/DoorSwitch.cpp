@@ -21,12 +21,24 @@ DoorSwitchState DoorSwitch::getState() {
     return state ? DoorSwitchState::CLOSED : DoorSwitchState::OPEN;
 }
 
+static volatile unsigned long previousTime = 0;
+static volatile unsigned long enterTime = 0;
+
 void doorSwitchOpenedISR() {
-    doorOpenendEventCount++;
+    enterTime = millis();
+    if(enterTime-previousTime > 200) {
+        doorOpenendEventCount++;
+        previousTime = enterTime;
+    }
 }
 
 void doorSwitchClosedISR() {
-    doorClosedEventCount++;
+    //SERIAL_INFO("previous: %d, enter: %d", previousTime, enterTime);
+    enterTime = millis();
+    if(enterTime-previousTime > 200) {
+        doorClosedEventCount++;
+        previousTime = enterTime;
+    }
 }
 
 void DoorSwitch::handleDoorOpenedEvent() {
@@ -40,8 +52,9 @@ void DoorSwitch::handleDoorOpenedEvent() {
             MQTT_INFO(mqtt, "Door opened");
             mqtt->publish(MqttTopics::DOOR_STATE, "{ \"doorState\": \"open\" }");
         }
+        SERIAL_INFO("Door switch opened event count: %d", doorOpenendEventCount);
     }
-    SERIAL_INFO("Door switch opened event count: %d", doorOpenendEventCount);
+    //SERIAL_INFO("Door switch opened event count: %d", doorOpenendEventCount);
 }
 
 void DoorSwitch::handleDoorClosedEvent() {
@@ -50,15 +63,16 @@ void DoorSwitch::handleDoorClosedEvent() {
         SERIAL_INFO("Door closed");
         MQTT_INFO(mqtt, "Door closed");
         mqtt->publish(MqttTopics::DOOR_STATE, "{ \"doorState\": \"closed\" }");
+        SERIAL_INFO("Door switch closed event count: %d", doorClosedEventCount);
     }
-    SERIAL_INFO("Door switch closed event count: %d", doorClosedEventCount);
+    //SERIAL_INFO("Door switch closed event count: %d", doorClosedEventCount);
 }
 
 
 
 void triggerIntrusionEvent() {
     SERIAL_INFO("INTRUSION DETECTED!");
-    //MQTT_INFO(mqtt, "INTRUSION DETECTED!");
-    //mqtt->publish(MqttTopics::INTRUSION_EVENT, "");
+    MQTT_INFO(mqtt, "INTRUSION DETECTED!");
+    mqtt->publish(MqttTopics::INTRUSION_EVENT, "");
 }
 
