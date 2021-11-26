@@ -1,3 +1,52 @@
-td {
-  padding: 16px 32px;
+.doorlist-wrapper {
+  width: 960px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+.doorlist-table {
+  width: 100%;
+}
+
+.mat-column-button {
+  width: 70px;
+}
+
+tr.doorlist-detail-row {
+  height: 0;
+}
+
+tr.doorlist-row:not(.doorlist-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.doorlist-row:not(.doorlist-expanded-row):active {
+  background: #efefef;
+}
+
+.doorlist-row td {
+  border-bottom-width: 0;
+}
+
+.door-events {
+  overflow: hidden;
+  display: flex;
+}
+
+.inner-table {
+  width: 100%;
+}
+
+.mat-table table {
+  width: 100%;
+  background-color: #EEE;
+  margin-bottom: 20px;
+}
+
+.inner-table mat-form-field {
+  margin-top: 15px;
+  width: 100%;
 }

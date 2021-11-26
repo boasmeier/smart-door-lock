@@ -1,25 +1,31 @@
-#include "Arduino.h"
+#include <Arduino.h>
 #include "CardReader.hpp"
 #include "HumanMachineInterface.hpp"
 #include "../logger/SerialLogger.hpp"
 #include "../door/Door.hpp"
-#include <pn532.h>
-#include <pn532_uno.h>
+#include "../lib/pn532/pn532.h"
+#include "../lib/pn532/pn532_uno.h"
 
 CardReader::CardReader() {
     uint8_t buff[255];
-    PN532_SPI_Init(&pn532);
-    if(PN532_GetFirmwareVersion(&pn532, buff) == PN532_STATUS_OK) {
+    PN532_SPI_Init(&m_pn532);
+    if(PN532_GetFirmwareVersion(&m_pn532, buff) == PN532_STATUS_OK) {
         SERIAL_INFO("Found PN532 with firmware version: %d.%d", buff[1], buff[2]);
     }
-    PN532_SamConfiguration(&pn532);
+    PN532_SamConfiguration(&m_pn532);
 }
 
 void CardReader::read() {
+    // This is needed because WiFiNINA library communicates over SPI with wifichip
+    // and the pn532 library doesn't do a proper chip select. Therefore we just call 
+    // the initialization again which sends chip select signal.    
+    PN532_SPI_Init(&m_pn532);
+
+    // Read target with timeout of 1000ms and check if authorized.
     uint8_t uid[MIFARE_UID_MAX_LENGTH];
     int32_t uidLen = 0;
     String uidString;
-    uidLen = PN532_ReadPassiveTarget(&pn532, uid, PN532_MIFARE_ISO14443A, 1000);
+    uidLen = PN532_ReadPassiveTarget(&m_pn532, uid, PN532_MIFARE_ISO14443A, 1000);
     if(uidLen == PN532_STATUS_ERROR) {
         return;
     }

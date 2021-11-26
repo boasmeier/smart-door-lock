@@ -171,6 +171,41 @@ paths:
         "200":
           description: "Successful post doorlocks action"
 
+  /doorlocks/{site_id}/{device_id}/event:
+    get:
+      summary: "Returns all the events for the provided device id."
+      operationId: "api.doorlocks.get_doorlock_events"
+      tags:
+        - "Door Locks Site"
+      description: "Returns all events for the door lock."
+      parameters:
+        - name: site_id
+          in: path
+          description: site Id
+          required: true
+          schema:
+            type: string
+        - name: device_id
+          in: path
+          description: device Id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: "Successful get doorlocks actions operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  datetime:
+                    type: string
+                  event:
+                    type: string
+                  message:
+                    type: string
 
 servers:
   - url: /

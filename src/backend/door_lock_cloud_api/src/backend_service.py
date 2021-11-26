@@ -46,7 +46,6 @@ class BackendService():
         self.doorlock_event_manager: DoorLockEventManager = DoorLockEventManager(self.mqtt_client, self.db)
         self.doorlock_action_manager: DoorLockActionManager = MqttDoorLockActionManager(self.mqtt_client, self.db)
         #self.doorlock_event_manager.register_handle(self.handle_events)
-        #TODO: Add Telegram Service here
         #TelegramService(1335464798) -> Niklas
         self.telegram_services: List[TelegramService] = [TelegramService(-708897855, self.doorlock_action_manager)]
         self.register_callbacks()

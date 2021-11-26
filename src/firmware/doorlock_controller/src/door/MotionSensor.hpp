@@ -9,7 +9,10 @@ class MotionSensor {
     public:
         MotionSensor(int pin);
         MotionState getState();
+        void handleMotionDetection();
 };
 
-void handleMovementDetection();
+
+void motionDetectionISR();
     
+static volatile byte motionDetectedEventCount = 0;

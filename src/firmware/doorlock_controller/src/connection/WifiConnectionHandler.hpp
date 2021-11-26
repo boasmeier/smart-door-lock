@@ -28,4 +28,4 @@ class WifiConnectionHandler {
   
 };
 
-static WifiConnectionHandler *connHandl;
+extern WifiConnectionHandler *connHandl;

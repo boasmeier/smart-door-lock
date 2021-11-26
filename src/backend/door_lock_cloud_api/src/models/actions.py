@@ -1,4 +1,5 @@
 from enum import Enum
+import json
 from typing import Dict
 import models.definitions as definitions
 from datetime import datetime
@@ -34,7 +35,7 @@ class DoorLockAction():
     @classmethod
     def from_json(cls, json: Dict, doorlock: DoorLock, timestamp: int):
         """
-        Returns the DoorLock Object from json or None otherwise.
+        Returns the DoorLockAction Object from json or None otherwise.
         """
         try:
             datetime_timestamp = datetime.fromtimestamp(float(timestamp))

@@ -69,6 +69,21 @@ def get_doorlock_actions(site_id: str, device_id: str):
     else:
         return "Doorlock not found", 404
 
+def get_doorlock_events(site_id: str, device_id: str):
+    """
+    Returns all past events for a doorlock.
+    """
+    if db.does_doorlock_exist(site_id, device_id):
+        try:
+            return [event.to_json() for event in db.get_doorlock_events(site_id, device_id)], 200
+
+        except Exception as e:
+            logging.error(f"doorlocks: unable to parse event {e}")
+            return f"events not able to parse", 404
+
+    else:
+        return "Doorlock not found", 404
+
 def put_device_from_site(site_id: str, device_id: str, body: Dict):
     """
     Sets the new doorlock with name in this system.

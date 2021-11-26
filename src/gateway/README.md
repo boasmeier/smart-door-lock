@@ -39,5 +39,4 @@ Edge Agent
 ``
 cd door_lock_edge_agent/src
 python3
-
 ``

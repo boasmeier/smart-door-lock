@@ -1,6 +1,7 @@
 from typing import List
 from models.actions import DoorLockAction
 from models.doorlock import DoorLock, DoorState, LockState
+from models.events import DoorLockEvent, DoorLockEventType
 import models.definitions as definitions
 import redis
 import json
@@ -27,7 +28,7 @@ class RedisDatabase(Database):
         Returns all the doorlocks.
         """
         pass
-    
+
     def get_doorlocks(self, siteId: str) -> List[DoorLock]:
         """
         Returns all the doorlocks in the database with the passed siteId.
@@ -75,6 +76,20 @@ class RedisDatabase(Database):
         timestamps = self._get_all_timestamps(self._get_action_key(siteId, deviceId, "*"))
         return [DoorLockAction.from_json(json.loads(self._client.get(self._get_action_key(siteId, deviceId, timestamp))), doorlock, timestamp) for timestamp in timestamps] 
 
+    def set_doorlock_event(self, event: DoorLockEvent) :
+        """
+        Stores a doorlock event for a certain doorlock in the database.<
+        """
+        self._client.set(self._get_event_key(event.doorlock.site_id, event.doorlock.device_id, datetime.timestamp(event.datetime_timestamp)), json.dumps(event.to_json()))
+
+    def get_doorlock_events(self, siteId: str, deviceId: str) -> List[DoorLockEvent]:
+        """
+        Returns all the doorlock events in the database with the passed siteId and deviceId.
+        """
+        doorlock: DoorLock = self.get_doorlock(siteId, deviceId)
+        timestamps = self._get_all_timestamps(self._get_event_key(siteId, deviceId, "*"))
+        return [DoorLockEvent.from_json(json.loads(self._client.get(self._get_event_key(siteId, deviceId, timestamp))), doorlock, timestamp) for timestamp in timestamps] 
+
     def _base_key(self, site_id: str, device_id: str) -> str:
         """
         Returns the base key: [site_id]:doorlocks:[device_id]
@@ -93,6 +108,9 @@ class RedisDatabase(Database):
     def _get_action_key(self, siteId: str, deviceId: str, timestamp: int):
         return self._base_key(siteId, deviceId) + RedisDatabase.delimiter + definitions.ACTION  + RedisDatabase.delimiter + str(timestamp)
 
+    def _get_event_key(self, siteId: str, deviceId: str, timestamp: int):
+        return self._base_key(siteId, deviceId) + RedisDatabase.delimiter + definitions.EVENT  + RedisDatabase.delimiter + str(timestamp)
+
     def _get_all_device_ids(self, siteId: str) -> List[str]:
         return set.union(set([self._parse_device_id(key) for key in self._client.keys((self._get_lockstate_key(siteId, "*")))]) , set([self._parse_device_id(str(key)) for key in self._client.keys((self._get_doorstate_key(siteId, "*")))]))
 
@@ -100,13 +118,14 @@ class RedisDatabase(Database):
         return set([self._parse_timestamp(key) for key in self._client.keys(key)])
 
     def _parse_device_id(self, key: str) -> str:
+        logging.info(f"_parse_device_id key: {key}")
         key = key.decode("utf-8")
-        logging.info(f"key: {key}")
         logging.info(f"split: {key.split(RedisDatabase.delimiter)}")
 
         return key.split(RedisDatabase.delimiter)[2]
 
     def _parse_timestamp(self, key: str) -> str:
+        logging.info(f"_parse_timestamp key: {key}")
         key = key.decode("utf-8")
         return key.split(RedisDatabase.delimiter)[4]
     
