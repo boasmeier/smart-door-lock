@@ -36,7 +36,14 @@ class DoorLockEventManager():
 
             doorlock: DoorLock = self.db.get_doorlock(site_id, device_id)
 
-            event: DoorLockEvent = DoorLockEvent(event_type, msg.payload.decode("utf-8"), doorlock)
+            payload = msg.payload
+
+            try:
+                payload = payload.decode("utf-8")
+            except (UnicodeDecodeError, AttributeError):
+                pass
+                
+            event: DoorLockEvent = DoorLockEvent(event_type, payload, doorlock)
             
             self.db.set_doorlock_event(event)
 

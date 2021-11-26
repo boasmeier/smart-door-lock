@@ -119,13 +119,21 @@ class RedisDatabase(Database):
 
     def _parse_device_id(self, key: str) -> str:
         logging.info(f"_parse_device_id key: {key}")
-        key = key.decode("utf-8")
+
+        try:
+            key = key.decode("utf-8")
+        except (UnicodeDecodeError, AttributeError):
+            pass
+
         logging.info(f"split: {key.split(RedisDatabase.delimiter)}")
 
         return key.split(RedisDatabase.delimiter)[2]
 
     def _parse_timestamp(self, key: str) -> str:
         logging.info(f"_parse_timestamp key: {key}")
-        key = key.decode("utf-8")
+        try:
+            key = key.decode("utf-8")
+        except (UnicodeDecodeError, AttributeError):
+            pass
         return key.split(RedisDatabase.delimiter)[4]
     
