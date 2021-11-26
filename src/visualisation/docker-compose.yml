@@ -1,0 +1,12 @@
+# run the following commands in the console to start the docker container:
+# ng build --prod
+# docker-compose up --build -d
+
+version: "3.8"
+
+services:
+  doorlock-frontend:
+    container_name: iot-frontend
+    build: .
+    ports:
+      - "80:80"
