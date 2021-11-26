@@ -44,7 +44,7 @@
 // This indicates if the bits read/write should be reversed
 #define PN532_SPI_HARDWARE_LSB
 
-#define PN532_NSS                       (11)
+#define PN532_NSS                       (4)
 #define PN532_REQ                       (2)
 #define PN532_RST                       (3)
 
