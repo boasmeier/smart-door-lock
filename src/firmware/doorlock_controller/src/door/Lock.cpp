@@ -25,13 +25,15 @@ void Lock::unlock() {
     m_state = DoorLockState::UNLOCKED;
     SERIAL_INFO("Door unlocked, state=%i", m_state);
     MQTT_INFO(mqtt, "Door unlocked");
-    digitalWrite(m_pin, LOW);
+    mqtt->publish(MqttTopics::LOCK_STATE, "{ \"lockState\": \"unlocked\" }");
+    digitalWrite(m_pin, HIGH);
 }
 
 void Lock::lock() {
     m_state = DoorLockState::LOCKED;
     SERIAL_INFO("Door locked, state=%i", m_state);
     MQTT_INFO(mqtt, "Door locked");
-    digitalWrite(m_pin, HIGH);
+    mqtt->publish(MqttTopics::LOCK_STATE, "{ \"lockState\": \"locked\" }");
+    digitalWrite(m_pin, LOW);
 }
 
