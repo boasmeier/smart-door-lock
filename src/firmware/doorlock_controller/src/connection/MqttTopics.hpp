@@ -9,6 +9,7 @@ class MqttTopics {
     // publisher topics
     static const char *INTRUSION_EVENT;
     static const char *SUSPICIOUS_ACTIVITY_EVENT;
+    static const char *CARD_EVENT;
     static const char *RING_EVENT;
     static const char *DOOR_STATE;
     static const char *LOCK_STATE;

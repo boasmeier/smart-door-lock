@@ -11,6 +11,7 @@ const char *MqttTopics::LOCK = "gateway/1/action/lock";
 const char *MqttTopics::INTRUSION_EVENT = "gateway/1/event/intrusion";
 const char *MqttTopics::SUSPICIOUS_ACTIVITY_EVENT = "gateway/1/event/suspiciousactivity";
 const char *MqttTopics::RING_EVENT = "gateway/1/event/ring";
+const char *MqttTopics::CARD_EVENT = "gateway/1/event/card";
 const char *MqttTopics::DOOR_STATE = "gateway/1/state/door";
 const char *MqttTopics::LOCK_STATE = "gateway/1/state/lock";
 const char *MqttTopics::LOG_TELEMETRY = "gateway/1/telemetry/logs";
