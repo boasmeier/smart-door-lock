@@ -8,6 +8,7 @@ class DoorLockEventType(Enum):
     intrusion = 0
     suspiciousactivity = 1
     ring = 2
+    movement = 3
 
 class DoorLockEvent():
     def __init__(self, event_type: DoorLockEventType, message: str, device_id: str):
