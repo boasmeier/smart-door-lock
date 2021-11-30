@@ -11,7 +11,9 @@ class EventType(Enum):
 class DoorLockEventType(Enum):
     intrusion = 0
     suspiciousactivity = 1
-    ring = 2
+    ring = 2    
+    movement = 3
+    card = 4
 
 class DoorLockEvent():
     def __init__(self, event_type: DoorLockEventType, message: str, doorlock: DoorLock, datetime_timestamp = None):

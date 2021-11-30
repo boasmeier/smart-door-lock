@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from models.events import DoorLockEvent, DoorLockEventType
 from models.states import DoorLockState
@@ -45,4 +46,7 @@ class ArduinoListener():
         Handles incoming events to the state.
         """
         for event_subscriber in self.event_subscribers:
-            event_subscriber(DoorLockEvent(DoorLockEventType[mqtt_topics.gateway.get_state_type_from_topic(msg.topic)], msg.payload, mqtt_topics.gateway.get_device_id_from_topic(msg.topic)))
+            try:
+                event_subscriber(DoorLockEvent(DoorLockEventType[mqtt_topics.gateway.get_state_type_from_topic(msg.topic)], msg.payload, mqtt_topics.gateway.get_device_id_from_topic(msg.topic)))
+            except Exception as e:
+                logging.error(f"ArduinoListener - unable to handle event: {e}")

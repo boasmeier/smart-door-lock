@@ -8,7 +8,8 @@ from cloud.cloud_publisher import CloudPublisher
 from edge_logging.log_handler import PythonLogHandler
 from edge_logging.log_manager import LogManager
 from edge_logging.log_provider import ArduinoMqttLogProvider
-from models.bell import BellHandler, DummyBell, PiezoBell
+from models.suspicious_activity_detector import create_from_settings
+from models.bell import BellHandler, DummyBell
 from mqtt_client.client import MqttClient
 from mqtt_client.paho_client import PahoClient
 from settings import *
@@ -18,7 +19,7 @@ class EdgeAgent():
         self.setup_cloud_client(settings.mqtt_cloud)
         self.setup_gateway_client(settings.mqtt_gateway)
         self.setup_log_manager(settings.device_ids)
-        self.setup_cloud_publisher(settings.site_id)
+        self.setup_cloud_publisher(settings.site_id, settings.suspicious_activity)
         self.setup_bell()
         self.setup_arduino_listener(settings.device_ids)
         self.setup_arduino_publisher()
@@ -48,11 +49,11 @@ class EdgeAgent():
         self.cloud_listener = CloudListener(self.mqtt_cloud_client, device_ids, site_id)
         self.cloud_listener.subscribe_to_actions(self.arduino_publisher.handle_action)
 
-    def setup_cloud_publisher(self, site_id: str):
-        self.cloud_publisher = CloudPublisher(self.mqtt_cloud_client, site_id)
+    def setup_cloud_publisher(self, site_id: str, suspicious_activity_settings: SuspiciousActivitySettings):
+        self.cloud_publisher = CloudPublisher(self.mqtt_cloud_client, site_id, create_from_settings(suspicious_activity_settings))
 
     def setup_arduino_publisher(self):
         self.arduino_publisher = ArduinoPublisher(self.mqtt_gateway_client)
 
     def setup_bell(self):
-        self.bell_handler = BellHandler(PiezoBell(12))
+        self.bell_handler = BellHandler(DummyBell())
