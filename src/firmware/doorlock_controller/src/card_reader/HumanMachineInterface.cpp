@@ -10,15 +10,31 @@ m_failureLed(failureLed) {
 void HumanMachineInterface::success() {
     m_successLed.on();
     m_failureLed.off();
+    ledTimer->Start();
+    /*
     delay(300);
     m_successLed.off();
-    m_failureLed.off();    
+    m_failureLed.off(); 
+    */   
 }
 
 void HumanMachineInterface::failure() {
     m_successLed.off();
     m_failureLed.on();
+    ledTimer->Start();
+    /*
     delay(300);
+    m_successLed.off();
+    m_failureLed.off();
+    */
+}
+
+void HumanMachineInterface::on() {
+    m_successLed.on();
+    m_failureLed.on();
+}
+
+void HumanMachineInterface::off() {
     m_successLed.off();
     m_failureLed.off();
 }
@@ -34,3 +50,8 @@ void HumanMachineInterface::blink(int n) {
         delay(ms);
     }
 }
+
+void ledOffCallback() {
+    cardReaderHmi->off();
+}
+

@@ -21,12 +21,16 @@
 #include "src/card_reader/HumanMachineInterface.hpp"
 #include "src/card_reader/Led.hpp"
 
+#include "src/lib/timer/Timer.h"
+
 // define global variables in .ino file inside setup function
 WifiConnectionHandler *connHandl;
 MyMqttClient *mqtt;
 CardReader *cardReader;
 HumanMachineInterface *cardReaderHmi;
 Door *door;
+
+Timer *ledTimer;
 
 // the setup function runs once when you press reset or power the board
 void setup()
@@ -38,6 +42,8 @@ void setup()
         continue;
     }
 
+    // set up timers
+    ledTimer = new Timer(500, ledOffCallback, true);
 
     // set up connection to gateway
     connectToWifi();
@@ -70,48 +76,18 @@ void setup()
 // the loop function runs over and over again forever
 void loop()
 {
-    /*
-    mqtt->publish(MqttTopics::DOOR_STATE, "{ \"doorState\": \"open\" }");
-    mqtt->publish(MqttTopics::LOCK_STATE, "{ \"lockState\": \"locked\" }");
-  
-    mqtt->publish(MqttTopics::INTRUSION_EVENT, "Intrusion event");
-    mqtt->publish(MqttTopics::SUSPICIOUS_ACTIVITY_EVENT, "Suspicious Activity");
-    mqtt->publish(MqttTopics::RING_EVENT, "Ring event");
-
-    MQTT_INFO(mqtt, "Test logger %d", 42);
-  
-    if(door->getDoorBellState() == DoorBellState::PRESSED) {
-        SERIAL_INFO("Ring event");
-        mqtt->publish(MqttTopics::RING_EVENT, "Ring event");
-    }
-    door->toggleLock();
-    if(door->getDoorSwitchState() == DoorSwitchState::OPEN) {
-        SERIAL_INFO("Door open");
-    }
-    else {
-        SERIAL_INFO("Door closed");
-    }
-
-    if(door->getLockState() == DoorLockState::UNLOCKED) {
-        SERIAL_INFO("Door is unlocked");
-        MQTT_INFO(mqtt, "Door is unlocked");
-    }
-    else {
-        SERIAL_INFO("Door is locked");
-        MQTT_INFO(mqtt, "Door is unlocked");
-    }
-    SERIAL_INFO("\n\n");
-    */
     mqtt->poll();
+    ledTimer->Update();
+
     cardReader->read();
+
     door->handleDoorBellRingEvent();
     door->handleDoorSwitchOpenedEvent();
     door->handleDoorSwitchClosedEvent();
     door->handleMotionDetectionEvent();
-    //MQTT_INFO(mqtt, "Arduino connected to broker %s:%d", MQTT_HOST, MQTT_PORT);
-    //connHandl->scanNetworks();
-    delay(3000);
     mqtt->handleMqttMessage();
+
+    delay(100);
 }
 
 void connectToWifi()
