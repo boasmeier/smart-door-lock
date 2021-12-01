@@ -18,12 +18,20 @@ MotionState MotionSensor::getState() {
 void MotionSensor::handleMotionDetection() {
     if(motionDetectedEventCount > 0) {
         motionDetectedEventCount--;
-        SERIAL_INFO("Movement detected");
+        SERIAL_INFO("Motion detected");
+        MQTT_INFO(mqtt, "Motion detected");
+        SERIAL_INFO("Motion detection event count: %d", motionDetectedEventCount);
+        mqtt->publish(MqttTopics::MOVEMENT_EVENT, "");
     }
-    SERIAL_INFO("Motion detection event count: %d", motionDetectedEventCount);
+    //SERIAL_INFO("Motion detection event count: %d", motionDetectedEventCount);
 }
 
+static volatile unsigned long previousTime = 0;
+static volatile unsigned long enterTime = 0;
 void motionDetectionISR() {
-    // TODO: Check wheter it is suspicious movement
-    motionDetectedEventCount++;
+    enterTime = millis();
+    if(enterTime-previousTime > 2000) {
+        motionDetectedEventCount++;
+        previousTime = enterTime;
+    }
 }

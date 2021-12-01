@@ -9,7 +9,7 @@ const char *MqttTopics::LOCK = "gateway/1/action/lock";
 
 // publisher topics
 const char *MqttTopics::INTRUSION_EVENT = "gateway/1/event/intrusion";
-const char *MqttTopics::SUSPICIOUS_ACTIVITY_EVENT = "gateway/1/event/suspiciousactivity";
+const char *MqttTopics::MOVEMENT_EVENT = "gateway/1/event/movement";
 const char *MqttTopics::RING_EVENT = "gateway/1/event/ring";
 const char *MqttTopics::CARD_EVENT = "gateway/1/event/card";
 const char *MqttTopics::DOOR_STATE = "gateway/1/state/door";
