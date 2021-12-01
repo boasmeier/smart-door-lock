@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "CardReader.hpp"
 #include "HumanMachineInterface.hpp"
+#include "../connection/MyMqttClient.hpp"
+#include "../connection/MqttTopics.hpp"
 #include "../logger/SerialLogger.hpp"
 #include "../logger/MqttLogger.hpp"
 #include "../door/Door.hpp"
@@ -46,14 +48,14 @@ void CardReader::checkCardPermission(String uid) {
     if(uid.equals(authorizedUid)) {
         SERIAL_INFO("Card with UID %s authorized and entry is granted", uid.c_str());
         MQTT_INFO(mqtt, "Card with UID %s authorized and entry is granted", uid.c_str());
-        mqtt->publish(MqttTopics::CARD_EVENT, "{ \"uid\": \"%d\", \"authorized\": \"true\"}", uid);
+        mqtt->publish(MqttTopics::CARD_EVENT, "{ \"authorized\": \"true\", \"uid\": \"%d\" }", uid);
         cardReaderHmi->success();
         door->unlock();
     }
     else {
         SERIAL_INFO("Card with UID %s not authorized", uid.c_str());
         MQTT_INFO(mqtt, "Card with UID %s not authorized", uid.c_str());
-        mqtt->publish(MqttTopics::CARD_EVENT, "{ \"uid\": \"%d\", \"authorized\": \"false\"}", uid);
+        mqtt->publish(MqttTopics::CARD_EVENT, "{ \"authorized\": \"false\", \"uid\": \"%d\" }", uid);
         cardReaderHmi->failure();
     }
 }

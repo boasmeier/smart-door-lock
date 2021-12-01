@@ -10,7 +10,7 @@ class MyMqttClient {
     MqttClient m_mqttClient;
 
     MyMqttClient(const char *broker, int port);
-    void publish(const char *topic, const char *msg);
+    void publish(const char *topic, const char *msg, ...);
     void subscribeTo(const char *topic);
     void poll();
     void handleMqttMessage();
