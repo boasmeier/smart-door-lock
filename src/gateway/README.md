@@ -38,5 +38,6 @@ sudo docker-compose up --build
 Edge Agent
 ``
 cd door_lock_edge_agent/src
-python3
+
+python3 main.py
 ``
