@@ -40,9 +40,21 @@ tr.doorlist-row:not(.doorlist-expanded-row):active {
   width: 100%;
 }
 
+.mat-table .mat-header-cell {
+  font-size: 1.1em;
+}
+
+.mat-table .mat-table .mat-header-row {
+  background-color: #D9D9D9;
+}
+
+.mat-table .mat-table .mat-header-cell {
+  /*color: #F9F9F9;*/
+}
+
 .mat-table table {
   width: 100%;
-  background-color: #EEE;
+  background-color: #F9F9F9;
   margin-bottom: 20px;
 }
 

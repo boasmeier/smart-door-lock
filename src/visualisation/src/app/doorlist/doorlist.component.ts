@@ -15,7 +15,7 @@ export interface Door {
 }
 
 export interface Event {
-  datetime: Date
+  datetime: string
   event: string
   message: string
 }
@@ -35,7 +35,6 @@ export interface Event {
 export class DoorlistComponent implements OnInit {
 
   doors: Door[] = []
-
 
   interval = 5000;
   doorlistColumns: string[] = ['deviceId', 'name', 'doorState', 'lockState', 'button'];
@@ -64,26 +63,26 @@ export class DoorlistComponent implements OnInit {
 
   refresh() {
     this.doorListService.getData<Door[]>("iotlab").subscribe({
-      next: data => {
-        this.doors = data
+      next: doors => {
+        for (let door of doors) {
+          this.doorListService.getDeviceData<Event[]>('iotlab', door.deviceId, 'event').subscribe({
+            next: events => {
+              door.events = events
+            },
+            error: error => {
+              this.toastr.error("Unable to reach server");
+              console.error(error);
+            }
+          })
+        }
+
+        this.doors = doors
       },
       error: error => {
         this.toastr.error("Unable to reach server");
         console.error(error);
       }
     });
-
-    for (let door of this.doors) {
-      this.doorListService.getDeviceData<Event[]>('iotlab', door.deviceId, 'event').subscribe({
-        next: data => {
-          door.events = data
-        },
-        error: error => {
-          this.toastr.error("Unable to reach server");
-          console.error(error);
-        }
-      })
-    }
   }
 
   handleBtnClick(deviceId: number) {
