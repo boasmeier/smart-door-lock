@@ -39,11 +39,10 @@ export class DoorlistComponent implements OnInit {
   interval = 5000;
   doorlistColumns: string[] = ['deviceId', 'name', 'doorState', 'lockState', 'button'];
   eventlistColumns: string[] = ['datetime', 'event', 'message'];
-  expandedElement: Event | null;
+  expandedElement: Door | undefined;
 
   constructor(private doorListService: DoorlockService,
               private toastr: ToastrService) {
-    this.expandedElement = null
     this.interval = setInterval(() => {
       this.refresh();
     }, this.interval);
