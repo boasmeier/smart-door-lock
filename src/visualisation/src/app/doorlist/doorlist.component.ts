@@ -15,7 +15,7 @@ export interface Door {
 }
 
 export interface Event {
-  datetime: string
+  datetime: Date
   event: string
   message: string
 }
@@ -67,6 +67,13 @@ export class DoorlistComponent implements OnInit {
           this.doorListService.getDeviceData<Event[]>('iotlab', door.deviceId, 'event').subscribe({
             next: events => {
               door.events = events
+                .sort((a, b) => +new Date(a.datetime) - +new Date(b.datetime))
+                .reverse();
+
+              // Parse string into date
+              for (let event of door.events) {
+                event.datetime = new Date(event.datetime)
+              }
             },
             error: error => {
               this.toastr.error("Unable to reach server");
