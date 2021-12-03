@@ -22,7 +22,7 @@
     <ng-container matColumnDef="button">
       <th mat-header-cell *matHeaderCellDef scope="col"></th>
       <td mat-cell *matCellDef="let door">
-        <button mat-raised-button (click)="handleBtnClick(door.deviceId)">
+        <button mat-raised-button (click)="handleBtnClick(door.deviceId); $event.stopPropagation();">
           {{ door.lockState == "locked" ? "Unlock" : "Lock" }}
         </button>
       </td>
