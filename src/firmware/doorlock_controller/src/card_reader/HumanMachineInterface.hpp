@@ -15,7 +15,7 @@
 
 class HumanMachineInterface {
     public:
-        HumanMachineInterface(Led successLed, Led failureLed);
+        HumanMachineInterface(Led& successLed, Led& failureLed);
         void success();
         void failure();
         void blink_blocking(int n);
@@ -29,12 +29,13 @@ class HumanMachineInterface {
         int m_blinkFreq = HMI_BLINK_FREQUENCY;  // hz
 };
 
+extern HumanMachineInterface *cardReaderHmi;
+
 void ledOffCallback();
 void ledOnCallback();
 void ledToggleCallback();
 void ledBlinkStopCallback();
 
-extern HumanMachineInterface *cardReaderHmi;
 extern Timer *ledTimer;
 extern Timer *blinkTimer;
 extern Timer *stopTimer;

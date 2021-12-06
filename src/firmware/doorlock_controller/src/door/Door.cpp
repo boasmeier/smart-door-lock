@@ -11,12 +11,14 @@
 #include "DoorSwitch.hpp"
 #include "DoorBell.hpp"
 #include "MotionSensor.hpp"
+#include "../card_reader/CardReader.hpp"
 
-Door::Door(Lock lock, DoorSwitch doorSwitch, DoorBell doorBell, MotionSensor motionSensor) :
+Door::Door(Lock& lock, DoorSwitch& doorSwitch, DoorBell& doorBell, MotionSensor& motionSensor, CardReader& cardReader):
     m_lock(lock),
     m_doorSwitch(doorSwitch),
     m_doorBell(doorBell),
-    m_motionSensor(motionSensor)
+    m_motionSensor(motionSensor),
+    m_cardReader(cardReader)
 {
 
 }
@@ -63,4 +65,8 @@ void Door::unlock() {
 
 void Door::lock() {
     m_lock.lock();
+}
+
+void Door::read() {
+    m_cardReader.read();
 }

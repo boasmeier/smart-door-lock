@@ -13,6 +13,7 @@
 #include "DoorBell.hpp"
 #include "DoorSwitch.hpp"
 #include "MotionSensor.hpp"
+#include "../card_reader/CardReader.hpp"
 
 
 class Door {
@@ -21,9 +22,10 @@ class Door {
         DoorSwitch m_doorSwitch;
         DoorBell m_doorBell;
         MotionSensor m_motionSensor;
+        CardReader m_cardReader;
 
     public:
-        Door(Lock lock, DoorSwitch doorSwitch, DoorBell doorBell, MotionSensor motionSensor);
+        Door(Lock& lock, DoorSwitch& doorSwitch, DoorBell& doorBell, MotionSensor& motionSensor, CardReader& cardReader);
 
         DoorLockState getLockState();
         void toggleLock();
@@ -40,11 +42,12 @@ class Door {
         MotionState getMotionState();
         void handleMotionDetectionEvent();
 
+        void read();
+
         Door *getDoor();
 };
 
 extern Door *door;
-void sendTestMessage();
 
 #endif // DOOR_H_
 

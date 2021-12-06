@@ -9,7 +9,7 @@
 #include "Led.hpp"
 #include "HumanMachineInterface.hpp"
 
-HumanMachineInterface::HumanMachineInterface(Led successLed, Led failureLed) :
+HumanMachineInterface::HumanMachineInterface(Led& successLed, Led& failureLed) :
 m_successLed(successLed),
 m_failureLed(failureLed) {
     blink();

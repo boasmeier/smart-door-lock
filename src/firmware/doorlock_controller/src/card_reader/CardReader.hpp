@@ -12,6 +12,7 @@
 #include "Arduino.h"
 #include "../lib/pn532/pn532.h"
 #include "../lib/pn532/pn532_uno.h"
+#include "HumanMachineInterface.hpp"
 
 class CardReader {
     public:
@@ -25,7 +26,5 @@ class CardReader {
         String uidToString(uint8_t uid[], int32_t len);
         
 };
-
-extern CardReader *cardReader;
 
 #endif // CARD_READER_H_

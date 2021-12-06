@@ -31,9 +31,8 @@
 // define global variables in .ino file inside setup function
 WifiConnectionHandler *connHandl;
 PahoMqttClient *mqtt;
-CardReader *cardReader;
-HumanMachineInterface *cardReaderHmi;
 Door *door;
+HumanMachineInterface *cardReaderHmi;
 
 Timer *ledTimer;
 Timer *blinkTimer;
@@ -49,10 +48,12 @@ void setup()
         continue;
     }
 
+
     // set up timers for non-blocking led handling
     ledTimer = new Timer(1000, ledOffCallback, true);
     blinkTimer = new Timer(1000/HMI_BLINK_FREQUENCY, ledToggleCallback, false);
     stopTimer = new Timer(1000/HMI_BLINK_FREQUENCY * 6, ledBlinkStopCallback, true);
+
 
     // set up connection to gateway
     connectToWifi();
@@ -64,10 +65,10 @@ void setup()
 
 
     // set up card reader
-    cardReader = new CardReader();
     Led greenLed(DOOR_LED_PIN_GREEN, String("green"));
     Led redLed(DOOR_LED_PIN_RED, String("red"));
     cardReaderHmi = new HumanMachineInterface(greenLed, redLed);
+    CardReader cardReader;
 
 
     // set up door
@@ -75,7 +76,7 @@ void setup()
     DoorSwitch doorSwitch(DOOR_SWITCH_PIN_OPEN, DOOR_SWITCH_PIN_CLOSE);
     DoorBell doorBell(DOORBELL_PIN);
     MotionSensor motionSensor(MOTION_SENSOR_PIN);
-    door = new Door(lock, doorSwitch, doorBell, motionSensor);
+    door = new Door(lock, doorSwitch, doorBell, motionSensor, cardReader);
 }
 
 
@@ -90,7 +91,7 @@ void loop()
     blinkTimer->Update();
     stopTimer->Update();
 
-    cardReader->read();
+    door->read();
     door->handleDoorBellRingEvent();
     door->handleDoorSwitchOpenedEvent();
     door->handleDoorSwitchClosedEvent();
