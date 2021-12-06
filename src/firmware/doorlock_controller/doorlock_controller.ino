@@ -1,5 +1,10 @@
 /*
-  
+ * doorlock_controller.ino
+ * Created on 2021-10-10
+ * 
+ * Copyright(c) 2021 HSLU.
+ * This software is the proprietary information of HSLU. 
+ * Author: Boas Meier boas.meier@stud.hslu.ch  
 */
 #include <SPI.h>
 #include <WiFiNINA.h>
@@ -67,8 +72,6 @@ void setup()
     DoorBell doorBell(DOORBELL_PIN);
     MotionSensor motionSensor(MOTION_SENSOR_PIN);
     door = new Door(lock, doorSwitch, doorBell, motionSensor);
-    
-
 }
 
 

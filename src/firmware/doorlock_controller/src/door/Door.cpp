@@ -1,3 +1,11 @@
+/*
+ * Door.cpp
+ * Created on 2021-10-10
+ * 
+ * Copyright(c) 2021 HSLU.
+ * This software is the proprietary information of HSLU. 
+ * Author: Boas Meier 
+*/
 #include "Door.hpp"
 #include "Lock.hpp"
 #include "DoorSwitch.hpp"

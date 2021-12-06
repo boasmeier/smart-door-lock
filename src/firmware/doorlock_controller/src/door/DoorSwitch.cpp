@@ -1,3 +1,11 @@
+/*
+ * DoorSwitch.cpp
+ * Created on 2021-10-10
+ * 
+ * Copyright(c) 2021 HSLU.
+ * This software is the proprietary information of HSLU. 
+ * Author: Boas Meier boas.meier@stud.hslu.ch 
+*/
 #include "SPI.h"
 #include "DoorSwitch.hpp"
 #include "Door.hpp"
