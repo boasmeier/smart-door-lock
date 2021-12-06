@@ -4,9 +4,9 @@
 #define DEVICE_ID "1"
 
 //#define MQTT_HOST "192.168.21.112"   // ip/hostname of gateway here
-#define MQTT_HOST "192.168.0.222"      // notebook @home boas 
+//#define MQTT_HOST "192.168.0.222"      // notebook @home boas 
 //#define MQTT_HOST "raspberry31"
-//#define MQTT_HOST "192.168.31.97"
+#define MQTT_HOST "192.168.31.97"       // raspberry31
 #define MQTT_PORT 1884
 
 //#define MQTT_HOST "broker.emqx.io" 
@@ -24,6 +24,6 @@
 #define DOORBELL_PIN 12
 #define DOOR_SWITCH_PIN_CLOSE 10
 #define DOOR_SWITCH_PIN_OPEN 13
-#define MOTION_SENSOR_PIN 2
+#define MOTION_SENSOR_PIN 5
 
 
