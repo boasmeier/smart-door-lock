@@ -14,14 +14,17 @@
 #include "../connection/PahoMqttClient.hpp"
 #include "../config/DoorlockConfig.h"
 
-
+#define MQTT_DEBUG(client, fmt, ...) MqttLogger::debug(client, PSTR(fmt), ##__VA_ARGS__)
 #define MQTT_INFO(client, fmt, ...) MqttLogger::info(client, PSTR(fmt), ##__VA_ARGS__)
+#define MQTT_WARNING(client, fmt, ...) MqttLogger::warning(client, PSTR(fmt), ##__VA_ARGS__)
 #define MQTT_ERROR(client, fmt, ...) MqttLogger::error(client, PSTR(fmt), ##__VA_ARGS__)
 
 class MqttLogger {
   public:
     MqttLogger();
+    static void debug(PahoMqttClient *client, const char *fmt, ...);
     static void info(PahoMqttClient *client, const char *fmt, ...);
+    static void warning(PahoMqttClient *client, const char *fmt, ...);
     static void error(PahoMqttClient *client, const char *fmt, ...);
 };
 

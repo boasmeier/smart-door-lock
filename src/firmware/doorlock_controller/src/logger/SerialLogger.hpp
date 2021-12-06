@@ -12,13 +12,17 @@
 #include <Arduino.h>
 #include <stdarg.h>
 
+#define SERIAL_DEBUG(fmt, ...) SerialLogger::debug(PSTR(fmt), ##__VA_ARGS__)
 #define SERIAL_INFO(fmt, ...) SerialLogger::info(PSTR(fmt), ##__VA_ARGS__)
+#define SERIAL_WARNING(fmt, ...) SerialLogger::warning(PSTR(fmt), ##__VA_ARGS__)
 #define SERIAL_ERROR(fmt, ...) SerialLogger::error(PSTR(fmt), ##__VA_ARGS__)
 
 class SerialLogger {
   public:
     SerialLogger();
+    static void debug(const char *fmt, ...);
     static void info(const char *fmt, ...);
+    static void warning(const char *fmt, ...);
     static void error(const char *fmt, ...); 
 };
 
