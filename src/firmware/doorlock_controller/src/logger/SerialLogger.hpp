@@ -6,8 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch  
 */
-#ifndef SERIALLOGGER_H_
-#define SERIALLOGGER_H_
+#ifndef SERIAL_LOGGER_H_
+#define SERIAL_LOGGER_H_
 
 #include <Arduino.h>
 #include <stdarg.h>
@@ -22,7 +22,7 @@ class SerialLogger {
     static void error(const char *fmt, ...); 
 };
 
-#endif // SERIALLOGGER_H_
+#endif // SERIAL_LOGGER_H_
 
 
    

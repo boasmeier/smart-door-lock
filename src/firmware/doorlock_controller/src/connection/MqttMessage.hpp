@@ -6,8 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#ifndef MQTTMESSAGE_H_
-#define MQTTMESSAGE_H_
+#ifndef MQTT_MESSAGE_H_
+#define MQTT_MESSAGE_H_
 
 #include <Arduino.h>
 
@@ -23,4 +23,4 @@ class MqttMessage {
         
 };
 
-#endif // MQTTMESSAGE_H_
+#endif // MQTT_MESSAGE_H_

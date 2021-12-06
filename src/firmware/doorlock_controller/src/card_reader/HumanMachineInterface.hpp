@@ -6,8 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#ifndef HUMAN_MACHINE_INTERFACE_H
-#define HUMAN_MACHINE_INTERFACE_H
+#ifndef HUMAN_MACHINE_INTERFACE_H_
+#define HUMAN_MACHINE_INTERFACE_H_
 
 #include "Led.hpp"
 #include "../lib/timer/Timer.h"
@@ -32,4 +32,4 @@ void ledOffCallback();
 extern HumanMachineInterface *cardReaderHmi;
 extern Timer *ledTimer;
 
-#endif 
+#endif // HUMAN_MACHINE_INTERFACE_H_

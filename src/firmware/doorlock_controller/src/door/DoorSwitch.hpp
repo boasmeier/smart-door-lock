@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef DOOR_SWITCH_H_
+#define DOOR_SWITCH_H_
 
 enum class DoorSwitchState { OPEN, CLOSED };
 
@@ -28,4 +29,5 @@ void triggerIntrusionEvent();
 
 static volatile byte doorOpenendEventCount = 0;
 static volatile byte doorClosedEventCount = 0;
-    
+
+#endif // DOOR_SWITCH_H_  

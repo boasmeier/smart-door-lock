@@ -6,8 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch  
 */
-#ifndef MQTTLOGGER_H_
-#define MQTTLOGGER_H_
+#ifndef MQTT_LOGGER_H_
+#define MQTT_LOGGER_H_
 
 #include <Arduino.h>
 #include <stdarg.h>
@@ -25,4 +25,4 @@ class MqttLogger {
     static void error(MyMqttClient *client, const char *fmt, ...);
 };
 
-#endif // MQTTLOGGER_H_
+#endif // MQTT_LOGGER_H_

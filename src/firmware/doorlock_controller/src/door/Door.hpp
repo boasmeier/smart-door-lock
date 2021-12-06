@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef DOOR_H_
+#define DOOR_H_
 
 #include "Lock.hpp"
 #include "DoorBell.hpp"
@@ -44,5 +45,7 @@ class Door {
 
 extern Door *door;
 void sendTestMessage();
+
+#endif // DOOR_H_
 
     

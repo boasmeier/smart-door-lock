@@ -6,7 +6,9 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef DOOR_BELL_H_
+#define DOOR_BELL_H_
+
 #include <Arduino.h>
 enum class DoorBellState { NOT_PRESSED, PRESSED };
 
@@ -23,3 +25,5 @@ class DoorBell {
 // use byte because the arduino uno wifi rev2 is a 8-bit mcu. Otherwise use ATOMIC_BLOCk macro to access m_eventCount
 static volatile byte doorbellEventCount = 0;
 void ringEventISR();
+
+#endif // DOOR_BELL_H_

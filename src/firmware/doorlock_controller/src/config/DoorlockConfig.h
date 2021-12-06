@@ -6,7 +6,9 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef DOORLOCK_CONFIG_H_
+#define DOORLOCK_CONFIG_H_
+
 #include "../connection/MyMqttClient.hpp"
 
 #define DEVICE_ID "1"
@@ -34,4 +36,5 @@
 #define DOOR_SWITCH_PIN_OPEN 13
 #define MOTION_SENSOR_PIN 5
 
+#endif // DOORLOCK_CONFIG_H_
 

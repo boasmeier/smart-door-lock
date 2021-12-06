@@ -6,7 +6,9 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef CARD_READER_H_
+#define CARD_READER_H_
+
 #include "Arduino.h"
 #include "../lib/pn532/pn532.h"
 #include "../lib/pn532/pn532_uno.h"
@@ -25,3 +27,5 @@ class CardReader {
 };
 
 extern CardReader *cardReader;
+
+#endif // CARD_READER_H_

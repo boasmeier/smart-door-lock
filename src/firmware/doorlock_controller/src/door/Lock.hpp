@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef LOCK_H_
+#define LOCK_H_
 
 enum class DoorLockState { UNLOCKED, LOCKED };
 
@@ -22,4 +23,6 @@ class Lock {
         void unlock();
         void lock();
 };
+
+#endif // LOCK_H_
     

@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef MQTT_TOPICS_H_
+#define MQTT_TOPICS_H_
 
 class MqttTopics {
   public:
@@ -23,3 +24,5 @@ class MqttTopics {
     static const char *LOCK_STATE;
     static const char *LOG_TELEMETRY;
 };
+
+#endif // MQTT_TOPICS_H

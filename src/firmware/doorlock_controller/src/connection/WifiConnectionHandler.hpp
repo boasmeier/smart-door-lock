@@ -6,11 +6,10 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef WIFI_CONNECTION_HANDLER_H_
+#define WIFI_CONNECTION_HANDLER_H_
 
 #include <WiFiNINA.h>
-
-
 
 class WifiConnectionHandler {
   public:
@@ -37,3 +36,5 @@ class WifiConnectionHandler {
 };
 
 extern WifiConnectionHandler *connHandl;
+
+#endif // WIFI_CONNECTION_HANDLER_H_

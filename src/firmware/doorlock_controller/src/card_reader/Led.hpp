@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef LED_H_
+#define LED_H_
 
 #include "Arduino.h"
 
@@ -21,3 +22,5 @@ class Led {
         int m_pin;
         String m_color;
 };
+
+#endif // LED_H_

@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef MQTT_MESSAGE_HANDLER_H_
+#define MQTT_MESSAGE_HANDLER_H_
 
 #include <Arduino.h>
 
@@ -17,3 +18,5 @@ class MqttMessageHandler {
         static void handleUnlock();
         static void handleLock();
 };
+
+#endif // MQTT_MESSAGE_HANDLER_H_

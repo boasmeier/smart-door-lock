@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef MOTION_SENSOR_H_
+#define MOTION_SENSOR_H_
 
 enum class MotionState { ACTIVITY, NO_ACTIVITY };
 
@@ -24,3 +25,5 @@ class MotionSensor {
 void motionDetectionISR();
     
 static volatile byte motionDetectedEventCount = 0;
+
+#endif // MOTION_SENSOR_H_

@@ -6,7 +6,8 @@
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#pragma once
+#ifndef MY_MQTT_CLIENT_H_
+#define MY_MQTT_CLIENT_H_
 
 #include <ArduinoMqttClient.h>
 #include <WiFiNINA.h>
@@ -45,3 +46,5 @@ static MqttMessage *msg = new MqttMessage("Test", "Msg");
 // use volatile and use ATOMIC_BLOCk macro to access m_eventCount because Arduino is a 8-bit mcu 
 // and we access mqttMessagePointerQueue from inside an ISR
 static volatile MqttMessage* mqttMessagePointerQueue[] = {(MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1};
+
+#endif // MY_MQTT_CLIENT_H_
