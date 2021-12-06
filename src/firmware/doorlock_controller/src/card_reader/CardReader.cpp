@@ -48,14 +48,22 @@ void CardReader::checkCardPermission(String uid) {
     if(uid.equals(authorizedUid)) {
         SERIAL_INFO("Card with UID %s authorized and entry is granted", uid.c_str());
         MQTT_INFO(mqtt, "Card with UID %s authorized and entry is granted", uid.c_str());
-        mqtt->publish(MqttTopics::CARD_EVENT, "{ \"authorized\": \"true\", \"uid\": \"%d\" }", uid);
+        char msg[LOG_SIZE_MAX];
+        strcpy(msg, "{ \"authorized\": \"true\", \"uid\": \"");
+        strcat(msg, uid.c_str());
+        strcat(msg, "\" }");
+        mqtt->publish(MqttTopics::CARD_EVENT, msg);
         cardReaderHmi->success();
         door->unlock();
     }
     else {
         SERIAL_INFO("Card with UID %s not authorized", uid.c_str());
         MQTT_INFO(mqtt, "Card with UID %s not authorized", uid.c_str());
-        mqtt->publish(MqttTopics::CARD_EVENT, "{ \"authorized\": \"false\", \"uid\": \"%d\" }", uid);
+        char msg[LOG_SIZE_MAX];
+        strcpy(msg, "{ \"authorized\": \"false\", \"uid\": \"");
+        strcat(msg, uid.c_str());
+        strcat(msg, "\" }");
+        mqtt->publish(MqttTopics::CARD_EVENT, msg);
         cardReaderHmi->failure();
     }
 }

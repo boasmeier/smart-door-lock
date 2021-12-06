@@ -16,17 +16,10 @@ MyMqttClient::MyMqttClient(const char *broker, int port): m_mqttClient(m_wifiCli
   SERIAL_INFO("You're connected to the MQTT broker!");
 }
 
-void MyMqttClient::publish(const char *topic, const char *msg, ...) {
-  char parsedMsg[LOG_SIZE_MAX];
-  char buf[LOG_SIZE_MAX];
-  va_list ap;
-  va_start(ap, msg);
-  vsnprintf_P(buf, LOG_SIZE_MAX, msg, ap);
-  va_end(ap);
-  strcat(parsedMsg, buf);
-  SERIAL_INFO("Sending message to topic:  %s, msg: %s", topic, parsedMsg);
+void MyMqttClient::publish(const char *topic, const char *msg) {
+  SERIAL_INFO("Sending message to topic:  %s, msg: %s", topic, msg);
   m_mqttClient.beginMessage(topic);
-  m_mqttClient.print(parsedMsg);
+  m_mqttClient.print(msg);
   m_mqttClient.endMessage();
 }
 
