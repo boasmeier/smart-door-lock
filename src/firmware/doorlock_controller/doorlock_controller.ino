@@ -9,9 +9,9 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include "src/connection/WifiConnectionHandler.hpp"
-#include "src/connection/MyMqttClient.hpp"
+#include "src/connection/PahoMqttClient.hpp"
 #include "src/connection/MqttTopics.hpp"
-#include "src/config/secrets.hpp"
+#include "src/config/Secrets.hpp"
 #include "src/config/DoorlockConfig.h"
 #include "src/logger/MqttLogger.hpp"
 #include "src/logger/SerialLogger.hpp"
@@ -30,7 +30,7 @@
 
 // define global variables in .ino file inside setup function
 WifiConnectionHandler *connHandl;
-MyMqttClient *mqtt;
+PahoMqttClient *mqtt;
 CardReader *cardReader;
 HumanMachineInterface *cardReaderHmi;
 Door *door;
@@ -52,7 +52,7 @@ void setup()
 
     // set up connection to gateway
     connectToWifi();
-    mqtt = new MyMqttClient(MQTT_HOST, MQTT_PORT);
+    mqtt = new PahoMqttClient(MQTT_HOST, MQTT_PORT);
     logSuccessfullConnectionToGateway();
     mqtt->m_mqttClient.onMessage(onMqttMessage);
     mqtt->subscribeTo(MqttTopics::UNLOCK);

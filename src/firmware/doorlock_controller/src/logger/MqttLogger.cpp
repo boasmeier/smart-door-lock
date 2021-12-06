@@ -9,10 +9,10 @@
 #include <Arduino.h>
 #include <stdarg.h>
 #include "MqttLogger.hpp"
-#include "../connection/MyMqttClient.hpp"
+#include "../connection/PahoMqttClient.hpp"
 #include "../connection/MqttTopics.hpp"
 
-void MqttLogger::info(MyMqttClient *client, const char *fmt, ...) {
+void MqttLogger::info(PahoMqttClient *client, const char *fmt, ...) {
   char msg[LOG_SIZE_MAX];
   strcpy(msg, "INFO: ");
   char buf[LOG_SIZE_MAX - strlen(msg)];
@@ -24,7 +24,7 @@ void MqttLogger::info(MyMqttClient *client, const char *fmt, ...) {
   client->publish(MqttTopics::LOG_TELEMETRY, msg);
 }
 
-void MqttLogger::error(MyMqttClient *client, const char *fmt, ...) {
+void MqttLogger::error(PahoMqttClient *client, const char *fmt, ...) {
   char msg[LOG_SIZE_MAX];
   strcpy(msg, "ERROR: ");
   char buf[LOG_SIZE_MAX - strlen(msg)];

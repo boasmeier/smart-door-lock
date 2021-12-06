@@ -11,7 +11,7 @@
 
 #include <Arduino.h>
 #include <stdarg.h>
-#include "../connection/MyMqttClient.hpp"
+#include "../connection/PahoMqttClient.hpp"
 #include "../config/DoorlockConfig.h"
 
 
@@ -21,8 +21,8 @@
 class MqttLogger {
   public:
     MqttLogger();
-    static void info(MyMqttClient *client, const char *fmt, ...);
-    static void error(MyMqttClient *client, const char *fmt, ...);
+    static void info(PahoMqttClient *client, const char *fmt, ...);
+    static void error(PahoMqttClient *client, const char *fmt, ...);
 };
 
 #endif // MQTT_LOGGER_H_

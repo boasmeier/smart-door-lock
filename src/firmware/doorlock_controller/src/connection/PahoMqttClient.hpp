@@ -1,24 +1,24 @@
 /*
- * MyMqttClient.hpp
+ * PahoMqttClient.hpp
  * Created on 2021-10-10
  * 
  * Copyright(c) 2021 HSLU.
  * This software is the proprietary information of HSLU. 
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
-#ifndef MY_MQTT_CLIENT_H_
-#define MY_MQTT_CLIENT_H_
+#ifndef PAHO_MQTT_CLIENT_H_
+#define PAHO_MQTT_CLIENT_H_
 
 #include <ArduinoMqttClient.h>
 #include <WiFiNINA.h>
 #include "MqttMessage.hpp"
 
-class MyMqttClient {
+class PahoMqttClient {
   public:
     WiFiClient m_wifiClient;
     MqttClient m_mqttClient;
 
-    MyMqttClient(const char *broker, int port);
+    PahoMqttClient(const char *broker, int port);
     void publish(const char *topic, const char *msg);
     void subscribeTo(const char *topic);
     void poll();
@@ -35,7 +35,7 @@ class MyMqttClient {
   
 };
 
-extern MyMqttClient *mqtt;
+extern PahoMqttClient *mqtt;
 
 void onMqttMessage(int messageSize);
 
@@ -47,4 +47,4 @@ static MqttMessage *msg = new MqttMessage("Test", "Msg");
 // and we access mqttMessagePointerQueue from inside an ISR
 static volatile MqttMessage* mqttMessagePointerQueue[] = {(MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1, (MqttMessage*)-1};
 
-#endif // MY_MQTT_CLIENT_H_
+#endif // PAHO_MQTT_CLIENT_H_

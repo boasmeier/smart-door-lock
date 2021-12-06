@@ -9,7 +9,7 @@
 #ifndef DOORLOCK_CONFIG_H_
 #define DOORLOCK_CONFIG_H_
 
-#include "../connection/MyMqttClient.hpp"
+#include "../connection/PahoMqttClient.hpp"
 
 #define DEVICE_ID "1"
 

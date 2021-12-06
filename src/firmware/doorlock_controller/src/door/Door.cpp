@@ -4,7 +4,7 @@
  * 
  * Copyright(c) 2021 HSLU.
  * This software is the proprietary information of HSLU. 
- * Author: Boas Meier 
+ * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
 #include "Door.hpp"
 #include "Lock.hpp"

@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include "CardReader.hpp"
 #include "HumanMachineInterface.hpp"
-#include "../connection/MyMqttClient.hpp"
+#include "../connection/PahoMqttClient.hpp"
 #include "../connection/MqttTopics.hpp"
 #include "../logger/SerialLogger.hpp"
 #include "../logger/MqttLogger.hpp"

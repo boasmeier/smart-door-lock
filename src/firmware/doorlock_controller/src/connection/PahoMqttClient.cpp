@@ -1,5 +1,5 @@
 /*
- * MyMqttClient.cpp
+ * PahoMqttClient.cpp
  * Created on 2021-10-10
  * 
  * Copyright(c) 2021 HSLU.
@@ -7,7 +7,7 @@
  * Author: Boas Meier boas.meier@stud.hslu.ch 
 */
 #include <Arduino.h>
-#include "MyMqttClient.hpp"
+#include "PahoMqttClient.hpp"
 #include "MqttMessageHandler.hpp"
 #include "../logger/SerialLogger.hpp"
 #include "../config/DoorlockConfig.h"
@@ -15,7 +15,7 @@
 
 
 
-MyMqttClient::MyMqttClient(const char *broker, int port): m_mqttClient(m_wifiClient), _broker(broker), _port(port) {
+PahoMqttClient::PahoMqttClient(const char *broker, int port): m_mqttClient(m_wifiClient), _broker(broker), _port(port) {
   SERIAL_INFO("Attempting to connect to the MQTT broker: %s", _broker);
   if (!m_mqttClient.connect(_broker, _port)) {
     SERIAL_ERROR("MQTT connection failed! Error code = %d", m_mqttClient.connectError());
@@ -24,23 +24,23 @@ MyMqttClient::MyMqttClient(const char *broker, int port): m_mqttClient(m_wifiCli
   SERIAL_INFO("You're connected to the MQTT broker!");
 }
 
-void MyMqttClient::publish(const char *topic, const char *msg) {
+void PahoMqttClient::publish(const char *topic, const char *msg) {
   SERIAL_INFO("Sending message to topic:  %s, msg: %s", topic, msg);
   m_mqttClient.beginMessage(topic);
   m_mqttClient.print(msg);
   m_mqttClient.endMessage();
 }
 
-void MyMqttClient::subscribeTo(const char *topic) {
+void PahoMqttClient::subscribeTo(const char *topic) {
   SERIAL_INFO("Subscribing to topic:  %s", topic);
   m_mqttClient.subscribe(topic);
 }
 
-void MyMqttClient::poll() {
+void PahoMqttClient::poll() {
   m_mqttClient.poll();
 }
 
-void MyMqttClient::handleMqttMessage() {
+void PahoMqttClient::handleMqttMessage() {
     // take first message
     int n = QUEUE_SIZE;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
