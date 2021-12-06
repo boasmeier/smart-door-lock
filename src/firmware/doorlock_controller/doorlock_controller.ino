@@ -36,6 +36,8 @@ HumanMachineInterface *cardReaderHmi;
 Door *door;
 
 Timer *ledTimer;
+Timer *blinkTimer;
+Timer *stopTimer;
 
 // the setup function runs once when you press reset or power the board
 void setup()
@@ -47,8 +49,10 @@ void setup()
         continue;
     }
 
-    // set up timers
-    ledTimer = new Timer(500, ledOffCallback, true);
+    // set up timers for non-blocking led handling
+    ledTimer = new Timer(1000, ledOffCallback, true);
+    blinkTimer = new Timer(1000/HMI_BLINK_FREQUENCY, ledToggleCallback, false);
+    stopTimer = new Timer(1000/HMI_BLINK_FREQUENCY * 6, ledBlinkStopCallback, true);
 
     // set up connection to gateway
     connectToWifi();
@@ -80,16 +84,18 @@ void setup()
 void loop()
 {
     mqtt->poll();
+    mqtt->handleMqttMessage();
+
     ledTimer->Update();
+    blinkTimer->Update();
+    stopTimer->Update();
 
     cardReader->read();
-
     door->handleDoorBellRingEvent();
     door->handleDoorSwitchOpenedEvent();
     door->handleDoorSwitchClosedEvent();
     door->handleMotionDetectionEvent();
-    mqtt->handleMqttMessage();
-
+    
     delay(100);
 }
 

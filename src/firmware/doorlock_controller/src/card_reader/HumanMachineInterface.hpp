@@ -11,25 +11,32 @@
 
 #include "Led.hpp"
 #include "../lib/timer/Timer.h"
+#include "../config/DoorlockConfig.h"
 
 class HumanMachineInterface {
     public:
         HumanMachineInterface(Led successLed, Led failureLed);
         void success();
         void failure();
-        void blink(int n);
+        void blink_blocking(int n);
+        void blink();
         void off();
         void on();
 
     private:
         Led m_successLed;
         Led m_failureLed;
-        int m_blinkFreq = 2;  // hz
+        int m_blinkFreq = HMI_BLINK_FREQUENCY;  // hz
 };
 
 void ledOffCallback();
+void ledOnCallback();
+void ledToggleCallback();
+void ledBlinkStopCallback();
 
 extern HumanMachineInterface *cardReaderHmi;
 extern Timer *ledTimer;
+extern Timer *blinkTimer;
+extern Timer *stopTimer;
 
 #endif // HUMAN_MACHINE_INTERFACE_H_

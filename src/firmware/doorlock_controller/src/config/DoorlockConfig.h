@@ -26,6 +26,7 @@
 
 
 #define LOG_SIZE_MAX 128
+#define HMI_BLINK_FREQUENCY 2
 
 // definition of used gpio pins
 #define LOCK_LED_PIN 7
