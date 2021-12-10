@@ -5,3 +5,7 @@ This folder contains the backend services and the docker deploy configuration fo
 `
 docker-compose up --build
 `
+
+## Access Kibana Dashboard
+
+Via Browser: localhost:5601
