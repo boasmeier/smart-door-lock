@@ -57,9 +57,8 @@ class TimeBasedSuspiciousActivityDetector():
         return False
 
     def _is_cleanup_event(self, event):
-        if event.event_type is DoorLockEventType.card:
-            if bool(json.loads(event.message)["authorized"]) == True:
-                return True
+        if json.loads(event.message)["authorized"] == 'true':
+            return True
         return False
 
     def _add_new_event(self, event: DoorLockEvent) -> bool:
