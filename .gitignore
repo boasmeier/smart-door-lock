@@ -1,6 +1,7 @@
 **/__pycache__
 **/*.log
 **/secrets.hpp
+**/uids.h
 .idea/
 .DS_Store
 .vscode

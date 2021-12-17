@@ -28,10 +28,13 @@
 
 #include "src/lib/timer/Timer.h"
 
+#include "src/uid_store/UidEepromStore.hpp"
+
 // define global variables in .ino file inside setup function
 WifiConnectionHandler *connHandl;
 PahoMqttClient *mqtt;
 Door *door;
+UidEepromStore *uidStore;
 HumanMachineInterface *cardReaderHmi;
 
 Timer *ledTimer;
@@ -48,7 +51,6 @@ void setup()
         continue;
     }
 
-
     // set up timers for non-blocking led handling
     ledTimer = new Timer(1000, ledOffCallback, true);
     blinkTimer = new Timer(1000/HMI_BLINK_FREQUENCY, ledToggleCallback, false);
@@ -62,6 +64,13 @@ void setup()
     mqtt->m_mqttClient.onMessage(onMqttMessage);
     mqtt->subscribeTo(MqttTopics::UNLOCK);
     mqtt->subscribeTo(MqttTopics::LOCK);
+
+
+    // read uids from eeprom
+    uidStore = new UidEepromStore();
+    //SERIAL_INFO("Contains: %d", store->contains(String("01 02 03 04")));
+    //SERIAL_INFO("Contains: %d", store->contains(String("01 23 45 67")));
+    //for (;;)
 
 
     // set up card reader
