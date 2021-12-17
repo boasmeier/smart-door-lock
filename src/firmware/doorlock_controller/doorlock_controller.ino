@@ -34,7 +34,6 @@
 WifiConnectionHandler *connHandl;
 PahoMqttClient *mqtt;
 Door *door;
-UidEepromStore *uidStore;
 HumanMachineInterface *cardReaderHmi;
 
 Timer *ledTimer;
@@ -51,6 +50,7 @@ void setup()
         continue;
     }
 
+
     // set up timers for non-blocking led handling
     ledTimer = new Timer(1000, ledOffCallback, true);
     blinkTimer = new Timer(1000/HMI_BLINK_FREQUENCY, ledToggleCallback, false);
@@ -65,13 +65,8 @@ void setup()
     mqtt->subscribeTo(MqttTopics::UNLOCK);
     mqtt->subscribeTo(MqttTopics::LOCK);
 
-
     // read uids from eeprom
-    uidStore = new UidEepromStore();
-    //SERIAL_INFO("Contains: %d", store->contains(String("01 02 03 04")));
-    //SERIAL_INFO("Contains: %d", store->contains(String("01 23 45 67")));
-    //for (;;)
-
+    UidEepromStore uidStore;
 
     // set up card reader
     Led greenLed(DOOR_LED_PIN_GREEN, String("green"));
@@ -85,7 +80,7 @@ void setup()
     DoorSwitch doorSwitch(DOOR_SWITCH_PIN_OPEN, DOOR_SWITCH_PIN_CLOSE);
     DoorBell doorBell(DOORBELL_PIN);
     MotionSensor motionSensor(MOTION_SENSOR_PIN);
-    door = new Door(lock, doorSwitch, doorBell, motionSensor, cardReader);
+    door = new Door(lock, doorSwitch, doorBell, motionSensor, cardReader, uidStore);
 }
 
 

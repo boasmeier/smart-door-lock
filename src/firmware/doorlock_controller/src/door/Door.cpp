@@ -12,15 +12,53 @@
 #include "DoorBell.hpp"
 #include "MotionSensor.hpp"
 #include "../card_reader/CardReader.hpp"
+#include "../connection/MqttTopics.hpp"
+#include "../connection/PahoMqttClient.hpp"
+#include "../logger/MqttLogger.hpp"
+#include "../logger/SerialLogger.hpp"
 
-Door::Door(Lock& lock, DoorSwitch& doorSwitch, DoorBell& doorBell, MotionSensor& motionSensor, CardReader& cardReader):
+Door::Door(Lock& lock, DoorSwitch& doorSwitch, DoorBell& doorBell, MotionSensor& motionSensor, CardReader& cardReader, UidEepromStore& uidStore):
     m_lock(lock),
     m_doorSwitch(doorSwitch),
     m_doorBell(doorBell),
     m_motionSensor(motionSensor),
-    m_cardReader(cardReader)
+    m_cardReader(cardReader),
+    m_uidStore(uidStore)
 {
 
+}
+
+void Door::read() {
+    String uid = m_cardReader.read();
+    if(uid.equals("")) {
+        return;
+    }
+    checkCardPermission(uid);
+}
+
+void Door::checkCardPermission(String uid) {
+    if(m_uidStore.contains(uid)) {
+        SERIAL_INFO("Card with UID %s authorized and entry is granted", uid.c_str());
+        MQTT_INFO(mqtt, "Card with UID %s authorized and entry is granted", uid.c_str());
+        char msg[LOG_SIZE_MAX];
+        strcpy(msg, "{ \"authorized\": \"true\", \"uid\": \"");
+        strcat(msg, uid.c_str());
+        strcat(msg, "\" }");
+        mqtt->publish(MqttTopics::CARD_EVENT, msg);
+        cardReaderHmi->success();
+        m_lock.unlock();
+    }
+    else {
+        SERIAL_INFO("Card with UID %s not authorized", uid.c_str());
+        MQTT_INFO(mqtt, "Card with UID %s not authorized", uid.c_str());
+        char msg[LOG_SIZE_MAX];
+        strcpy(msg, "{ \"authorized\": \"false\", \"uid\": \"");
+        strcat(msg, uid.c_str());
+        strcat(msg, "\" }");
+        mqtt->publish(MqttTopics::CARD_EVENT, msg);
+        cardReaderHmi->failure();
+        m_lock.lock();
+    }
 }
 
 DoorLockState Door::getLockState() {
@@ -65,8 +103,4 @@ void Door::unlock() {
 
 void Door::lock() {
     m_lock.lock();
-}
-
-void Door::read() {
-    m_cardReader.read();
 }

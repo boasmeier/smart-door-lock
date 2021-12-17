@@ -17,7 +17,7 @@
 class CardReader {
     public:
         CardReader();
-        void read();
+        String read();
 
     private:
         PN532 m_pn532;

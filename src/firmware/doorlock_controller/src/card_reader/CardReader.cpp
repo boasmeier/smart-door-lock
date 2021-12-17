@@ -29,7 +29,7 @@ CardReader::CardReader() {
 
 static volatile unsigned long previousTime = 0;
 static volatile unsigned long enterTime = 0;
-void CardReader::read() {
+String CardReader::read() {
     // This is needed because WiFiNINA library communicates over SPI with wifichip
     // and the pn532 library doesn't do a proper chip select. Therefore we just call 
     // the initialization again which sends chip select signal.    
@@ -40,10 +40,8 @@ void CardReader::read() {
     int32_t uidLen = 0;
     String uidString;
     uidLen = PN532_ReadPassiveTarget(&m_pn532, uid, PN532_MIFARE_ISO14443A, 1000);
-    //SERIAL_INFO("uidLen: %d", uidLen);
-    //SERIAL_INFO("uid: %d", uid);
     if(uidLen == PN532_STATUS_ERROR) {
-        return;
+        return String("");
     }
     else {
         enterTime = millis();
@@ -51,8 +49,11 @@ void CardReader::read() {
             uidString = uidToString(uid, uidLen);
             SERIAL_INFO("Detected card with UID: %s", uidString.c_str());
             MQTT_INFO(mqtt, "Detected card with UID: %s", uidString.c_str());
-            checkCardPermission(uidString);
             previousTime = enterTime;
+            return uidString;
+        }
+        else {
+            return String("");
         }
     }
 }

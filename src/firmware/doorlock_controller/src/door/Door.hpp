@@ -14,6 +14,7 @@
 #include "DoorSwitch.hpp"
 #include "MotionSensor.hpp"
 #include "../card_reader/CardReader.hpp"
+#include "../uid_store/UidEepromStore.hpp"
 
 
 class Door {
@@ -23,9 +24,17 @@ class Door {
         DoorBell m_doorBell;
         MotionSensor m_motionSensor;
         CardReader m_cardReader;
+        UidEepromStore m_uidStore;
+
+        void checkCardPermission(String uid);
 
     public:
-        Door(Lock& lock, DoorSwitch& doorSwitch, DoorBell& doorBell, MotionSensor& motionSensor, CardReader& cardReader);
+        Door(Lock& lock, 
+                DoorSwitch& doorSwitch, 
+                DoorBell& doorBell, 
+                MotionSensor& motionSensor, 
+                CardReader& cardReader,
+                UidEepromStore& uidStore);
 
         DoorLockState getLockState();
         void toggleLock();
