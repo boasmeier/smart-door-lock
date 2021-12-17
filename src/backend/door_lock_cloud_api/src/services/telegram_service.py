@@ -98,7 +98,7 @@ class TelegramService:
 
         logging.info(f"_handle_ringing")
 
-        self.send_yes_no_message(f'Are you sure to open the door: {doorlock.name}?', 'Open the door?')
+        self.send_yes_no_message(f'Ring, Ring! Are you sure to open the door: {doorlock.name}?', 'Open the door?')
 
     def _handle_intrusion(self, doorlock: DoorLock, message: str):
         logging.info(f"_handle_intrusion")

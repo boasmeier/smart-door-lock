@@ -24,6 +24,8 @@
 
 
 
+#define MAX_UID_COUNT 10
+#define UID_LEN 11
 
 #define LOG_SIZE_MAX 128
 #define HMI_BLINK_FREQUENCY 2

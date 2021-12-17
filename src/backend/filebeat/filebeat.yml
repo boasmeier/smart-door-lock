@@ -2,10 +2,6 @@
 #=========================== Filebeat inputs =============================
 
 filebeat.inputs:
-- type: log
-  paths:
-    - /var/log/*
-
 - type: docker
   containers.ids:
     - '*'
