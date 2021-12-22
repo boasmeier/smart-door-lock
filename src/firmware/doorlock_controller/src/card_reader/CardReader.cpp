@@ -8,12 +8,10 @@
 */
 #include <Arduino.h>
 #include "CardReader.hpp"
-#include "HumanMachineInterface.hpp"
 #include "../connection/PahoMqttClient.hpp"
 #include "../connection/MqttTopics.hpp"
 #include "../logger/SerialLogger.hpp"
 #include "../logger/MqttLogger.hpp"
-#include "../door/Door.hpp"
 #include "../lib/pn532/pn532.h"
 #include "../lib/pn532/pn532_uno.h"
 
@@ -29,7 +27,7 @@ CardReader::CardReader() {
 
 static volatile unsigned long previousTime = 0;
 static volatile unsigned long enterTime = 0;
-void CardReader::read() {
+String CardReader::read() {
     // This is needed because WiFiNINA library communicates over SPI with wifichip
     // and the pn532 library doesn't do a proper chip select. Therefore we just call 
     // the initialization again which sends chip select signal.    
@@ -40,10 +38,8 @@ void CardReader::read() {
     int32_t uidLen = 0;
     String uidString;
     uidLen = PN532_ReadPassiveTarget(&m_pn532, uid, PN532_MIFARE_ISO14443A, 1000);
-    //SERIAL_INFO("uidLen: %d", uidLen);
-    //SERIAL_INFO("uid: %d", uid);
     if(uidLen == PN532_STATUS_ERROR) {
-        return;
+        return String("");
     }
     else {
         enterTime = millis();
@@ -51,34 +47,12 @@ void CardReader::read() {
             uidString = uidToString(uid, uidLen);
             SERIAL_INFO("Detected card with UID: %s", uidString.c_str());
             MQTT_INFO(mqtt, "Detected card with UID: %s", uidString.c_str());
-            checkCardPermission(uidString);
             previousTime = enterTime;
+            return uidString;
         }
-    }
-}
-
-void CardReader::checkCardPermission(String uid) {
-    String authorizedUid = String("01 23 45 67");
-    if(uid.equals(authorizedUid)) {
-        SERIAL_INFO("Card with UID %s authorized and entry is granted", uid.c_str());
-        MQTT_INFO(mqtt, "Card with UID %s authorized and entry is granted", uid.c_str());
-        char msg[LOG_SIZE_MAX];
-        strcpy(msg, "{ \"authorized\": \"true\", \"uid\": \"");
-        strcat(msg, uid.c_str());
-        strcat(msg, "\" }");
-        mqtt->publish(MqttTopics::CARD_EVENT, msg);
-        cardReaderHmi->success();
-        door->unlock();
-    }
-    else {
-        SERIAL_INFO("Card with UID %s not authorized", uid.c_str());
-        MQTT_INFO(mqtt, "Card with UID %s not authorized", uid.c_str());
-        char msg[LOG_SIZE_MAX];
-        strcpy(msg, "{ \"authorized\": \"false\", \"uid\": \"");
-        strcat(msg, uid.c_str());
-        strcat(msg, "\" }");
-        mqtt->publish(MqttTopics::CARD_EVENT, msg);
-        cardReaderHmi->failure();
+        else {
+            return String("");
+        }
     }
 }
 

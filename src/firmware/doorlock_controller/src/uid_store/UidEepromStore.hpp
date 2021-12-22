@@ -25,6 +25,4 @@ class UidEepromStore {
         
 };
 
-extern UidEepromStore *uidStore;
-
 #endif // UID_EEPROM_STORE_H_

@@ -34,12 +34,12 @@
 WifiConnectionHandler *connHandl;
 PahoMqttClient *mqtt;
 Door *door;
-UidEepromStore *uidStore;
 HumanMachineInterface *cardReaderHmi;
 
 Timer *ledTimer;
 Timer *blinkTimer;
 Timer *stopTimer;
+Timer *lockTimer;
 
 // the setup function runs once when you press reset or power the board
 void setup()
@@ -51,10 +51,14 @@ void setup()
         continue;
     }
 
+
     // set up timers for non-blocking led handling
     ledTimer = new Timer(1000, ledOffCallback, true);
     blinkTimer = new Timer(1000/HMI_BLINK_FREQUENCY, ledToggleCallback, false);
     stopTimer = new Timer(1000/HMI_BLINK_FREQUENCY * 6, ledBlinkStopCallback, true);
+
+    // set up timer to lock door 10s after unlock
+    lockTimer = new Timer(10000, lockCallback, true);
 
 
     // set up connection to gateway
@@ -65,13 +69,8 @@ void setup()
     mqtt->subscribeTo(MqttTopics::UNLOCK);
     mqtt->subscribeTo(MqttTopics::LOCK);
 
-
     // read uids from eeprom
-    uidStore = new UidEepromStore();
-    //SERIAL_INFO("Contains: %d", store->contains(String("01 02 03 04")));
-    //SERIAL_INFO("Contains: %d", store->contains(String("01 23 45 67")));
-    //for (;;)
-
+    UidEepromStore uidStore;
 
     // set up card reader
     Led greenLed(DOOR_LED_PIN_GREEN, String("green"));
@@ -85,7 +84,7 @@ void setup()
     DoorSwitch doorSwitch(DOOR_SWITCH_PIN_OPEN, DOOR_SWITCH_PIN_CLOSE);
     DoorBell doorBell(DOORBELL_PIN);
     MotionSensor motionSensor(MOTION_SENSOR_PIN);
-    door = new Door(lock, doorSwitch, doorBell, motionSensor, cardReader);
+    door = new Door(lock, doorSwitch, doorBell, motionSensor, cardReader, uidStore);
 }
 
 
@@ -99,6 +98,7 @@ void loop()
     ledTimer->Update();
     blinkTimer->Update();
     stopTimer->Update();
+    lockTimer->Update();
 
     door->read();
     door->handleDoorBellRingEvent();
