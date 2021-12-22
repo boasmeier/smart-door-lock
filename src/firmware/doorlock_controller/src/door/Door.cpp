@@ -46,7 +46,7 @@ void Door::checkCardPermission(String uid) {
         strcat(msg, "\" }");
         mqtt->publish(MqttTopics::CARD_EVENT, msg);
         cardReaderHmi->success();
-        m_lock.unlock();
+        this->unlock();
     }
     else {
         SERIAL_INFO("Card with UID %s not authorized", uid.c_str());
@@ -57,7 +57,7 @@ void Door::checkCardPermission(String uid) {
         strcat(msg, "\" }");
         mqtt->publish(MqttTopics::CARD_EVENT, msg);
         cardReaderHmi->failure();
-        m_lock.lock();
+        this->lock();
     }
 }
 
@@ -99,8 +99,13 @@ void Door::toggleLock() {
 
 void Door::unlock() {
     m_lock.unlock();
+    lockTimer->Start();
 }
 
 void Door::lock() {
     m_lock.lock();
+}
+
+void lockCallback() {
+    door->lock();
 }

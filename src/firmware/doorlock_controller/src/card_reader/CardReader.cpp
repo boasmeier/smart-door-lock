@@ -8,12 +8,10 @@
 */
 #include <Arduino.h>
 #include "CardReader.hpp"
-#include "HumanMachineInterface.hpp"
 #include "../connection/PahoMqttClient.hpp"
 #include "../connection/MqttTopics.hpp"
 #include "../logger/SerialLogger.hpp"
 #include "../logger/MqttLogger.hpp"
-#include "../door/Door.hpp"
 #include "../lib/pn532/pn532.h"
 #include "../lib/pn532/pn532_uno.h"
 
@@ -55,31 +53,6 @@ String CardReader::read() {
         else {
             return String("");
         }
-    }
-}
-
-void CardReader::checkCardPermission(String uid) {
-    String authorizedUid = String("01 23 45 67");
-    if(uid.equals(authorizedUid)) {
-        SERIAL_INFO("Card with UID %s authorized and entry is granted", uid.c_str());
-        MQTT_INFO(mqtt, "Card with UID %s authorized and entry is granted", uid.c_str());
-        char msg[LOG_SIZE_MAX];
-        strcpy(msg, "{ \"authorized\": \"true\", \"uid\": \"");
-        strcat(msg, uid.c_str());
-        strcat(msg, "\" }");
-        mqtt->publish(MqttTopics::CARD_EVENT, msg);
-        cardReaderHmi->success();
-        door->unlock();
-    }
-    else {
-        SERIAL_INFO("Card with UID %s not authorized", uid.c_str());
-        MQTT_INFO(mqtt, "Card with UID %s not authorized", uid.c_str());
-        char msg[LOG_SIZE_MAX];
-        strcpy(msg, "{ \"authorized\": \"false\", \"uid\": \"");
-        strcat(msg, uid.c_str());
-        strcat(msg, "\" }");
-        mqtt->publish(MqttTopics::CARD_EVENT, msg);
-        cardReaderHmi->failure();
     }
 }
 

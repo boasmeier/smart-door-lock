@@ -8,7 +8,6 @@
 */
 #include "SPI.h"
 #include "DoorBell.hpp"
-#include "Door.hpp"
 #include "../connection/PahoMqttClient.hpp"
 #include "../connection/MqttTopics.hpp"
 #include "../logger/SerialLogger.hpp"

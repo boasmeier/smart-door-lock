@@ -39,6 +39,7 @@ HumanMachineInterface *cardReaderHmi;
 Timer *ledTimer;
 Timer *blinkTimer;
 Timer *stopTimer;
+Timer *lockTimer;
 
 // the setup function runs once when you press reset or power the board
 void setup()
@@ -55,6 +56,9 @@ void setup()
     ledTimer = new Timer(1000, ledOffCallback, true);
     blinkTimer = new Timer(1000/HMI_BLINK_FREQUENCY, ledToggleCallback, false);
     stopTimer = new Timer(1000/HMI_BLINK_FREQUENCY * 6, ledBlinkStopCallback, true);
+
+    // set up timer to lock door 10s after unlock
+    lockTimer = new Timer(10000, lockCallback, true);
 
 
     // set up connection to gateway
@@ -94,6 +98,7 @@ void loop()
     ledTimer->Update();
     blinkTimer->Update();
     stopTimer->Update();
+    lockTimer->Update();
 
     door->read();
     door->handleDoorBellRingEvent();

@@ -13,6 +13,7 @@
 #include "DoorBell.hpp"
 #include "DoorSwitch.hpp"
 #include "MotionSensor.hpp"
+#include "../lib/timer/Timer.h"
 #include "../card_reader/CardReader.hpp"
 #include "../uid_store/UidEepromStore.hpp"
 
@@ -56,7 +57,10 @@ class Door {
         Door *getDoor();
 };
 
+void lockCallback();
+
 extern Door *door;
+extern Timer *lockTimer;
 
 #endif // DOOR_H_
 
