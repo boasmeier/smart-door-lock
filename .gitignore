@@ -6,3 +6,4 @@
 .DS_Store
 .vscode
 **/doorlock_controller/build
+**/elastic_stack/elasticsearch/data/*
