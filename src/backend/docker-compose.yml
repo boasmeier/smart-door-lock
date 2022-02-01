@@ -66,18 +66,30 @@ services:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+      KIBANA_HOST: ${KIBANA_HOST}
+      KIBANA_PORT: ${KIBANA_PORT}
     volumes:
       - ${ELASTIC_DATA}/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - kibana
   
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}
     user: root
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+      KIBANA_HOST: ${KIBANA_HOST}
+      KIBANA_PORT: ${KIBANA_PORT}
     volumes:
       - ${ELASTIC_DATA}/metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - kibana
 
 volumes:
   vol-emqx-data:

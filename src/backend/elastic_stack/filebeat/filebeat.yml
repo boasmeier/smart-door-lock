@@ -2,16 +2,12 @@
 #=========================== Filebeat inputs =============================
 
 filebeat.inputs:
-- type: log
-  paths:
-    - /var/log/*
-
 - type: docker
   containers.ids:
     - '*'
 
 - type: log
-  enabled: false
+  enabled: true
   paths:
     - /var/lib/docker/containers/*-json.log
   tags: ["docker-logs"]
@@ -24,11 +20,17 @@ filebeat.inputs:
 
 #----------------------------- Elasticsearch Output --------------------------------
 output.elasticsearch:
-  hosts: ["elasticsearch:9200"]
-  username: "elastic"
-  password: "HSLU-1234"
+  hosts: ["ELASTICSEARCH_HOST_PORT"]
+  username: "${ELASTIC_USERNAME}"
+  password: "${ELASTIC_PASSWORD}"
   indices:
     - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+
+#----------------------------- Kibana Output --------------------------------
+setup.kibana:
+  host: "${KIBANA_HOST}:${KIBANA_PORT}"
+  username: "${ELASTIC_USERNAME}"
+  password: "${ELASTIC_PASSWORD}"
 
 
 #================================ Processors =====================================
@@ -46,3 +48,9 @@ processors:
 
 logging.json: true
 logging.metrics.enabled: false
+
+
+# ================================= Dashboards =================================
+
+# These settings control loading the sample dashboards to the Kibana index.
+setup.dashboards.enabled: true
