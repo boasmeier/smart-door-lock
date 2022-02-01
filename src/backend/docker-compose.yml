@@ -31,37 +31,51 @@ services:
 
 #Elastic Stack
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_CLUSTER_NAME: ${ELASTIC_CLUSTER_NAME}
+      ELASTIC_NODE_NAME: ${ELASTIC_NODE_NAME}
+      ELASTIC_INIT_MASTER_NODE: ${ELASTIC_INIT_MASTER_NODE}
+      ELASTIC_DISCOVERY_SEEDS: ${ELASTIC_DISCOVERY_SEEDS}
     ports:
       - 9200:9200
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    networks:
-     - backend
+      - ${ELASTIC_DATA}/elasticsearch/data:/usr/share/elasticsearch/data
+      - ${ELASTIC_DATA}/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
   
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.15.1
-    #environment:
-    #  ELASTICSEARCH_URL: http://elasticsearch:9200
-    #  ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+    volumes:
+      - ${ELASTIC_DATA}/kibana/config:/usr/share/kibana/config
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
     ports:
       - 5601:5601
     depends_on:
       - elasticsearch
-    networks:
-      - backend
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:7.15.1
+    image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}
     user: root
-    networks:
-      - backend
     #if we use docker container logs
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
     volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ${ELASTIC_DATA}/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}
+    user: root
+    volumes:
+      - ${ELASTIC_DATA}/metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -74,8 +88,3 @@ volumes:
     name: foo-emqx-log
   redis-volume:
     name: redis-volume
-  elasticsearch-data:
-    name: elasticsearch-data
-
-networks:
-  backend:

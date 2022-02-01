@@ -1,0 +1,44 @@
+#================================ Outputs =====================================
+
+# Configure what output to use when sending the data collected by the beat.
+
+#----------------------------- Elasticsearch Output --------------------------------
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "HSLU-1234"
+
+setup.kibana:
+  host: "kibana:5601"
+  username: "elastic"
+  password: "HSLU-1234"
+
+
+
+#================================ Modules =====================================
+
+# Configure modules
+
+#----------------------------- Metricbeat Modules --------------------------------
+metricbeat.modules:
+- module: docker
+  metricsets:
+    - "container"
+    - "cpu"
+    - "diskio"
+    - "event"
+    - "healthcheck"
+    - "info"
+    #- "image"
+    - "memory"
+    - "network"
+    #- "network_summary"
+  hosts: ["unix:///var/run/docker.sock"]
+  period: 10s
+  enabled: true
+
+
+# ================================= Dashboards =================================
+
+# These settings control loading the sample dashboards to the Kibana index.
+setup.dashboards.enabled: true
