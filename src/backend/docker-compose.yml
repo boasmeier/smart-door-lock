@@ -58,25 +58,26 @@ services:
     depends_on:
       - elasticsearch
 
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}
-    user: root
+  #filebeat:
+  #  image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}
+  #  user: root
     #if we use docker container logs
-    environment:
-      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
-      KIBANA_HOST: ${KIBANA_HOST}
-      KIBANA_PORT: ${KIBANA_PORT}
-    volumes:
-      - ${ELASTIC_DATA}/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker:/var/lib/docker:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - kibana
+  #  environment:
+  #    ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+  #    ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+  #    ELASTICSEARCH_HOST_PORT: ${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}
+  #    KIBANA_HOST: ${KIBANA_HOST}
+  #    KIBANA_PORT: ${KIBANA_PORT}
+  #  volumes:
+  #    - ${ELASTIC_DATA}/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+  #    - /var/lib/docker:/var/lib/docker:ro
+  #    - /var/run/docker.sock:/var/run/docker.sock
+  #  depends_on:
+  #    - kibana
   
   metricbeat:
-    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}
+    #image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}
+    build: elastic_stack/metricbeat/.
     user: root
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
@@ -85,11 +86,12 @@ services:
       KIBANA_HOST: ${KIBANA_HOST}
       KIBANA_PORT: ${KIBANA_PORT}
     volumes:
-      - ${ELASTIC_DATA}/metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
-      - /var/lib/docker:/var/lib/docker:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
     depends_on:
       - kibana
+    restart: on-failure:10
 
 volumes:
   vol-emqx-data:
