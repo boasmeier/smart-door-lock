@@ -4,15 +4,15 @@
 
 #----------------------------- Elasticsearch Output --------------------------------
 output.elasticsearch:
-  hosts: ["ELASTICSEARCH_HOST_PORT"]
-  username: "${ELASTIC_USERNAME}"
-  password: "${ELASTIC_PASSWORD}"
+  hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "HSLU-1234"
 
 #----------------------------- Kibana Output --------------------------------
 setup.kibana:
-  host: "${KIBANA_HOST}:${KIBANA_PORT}"
-  username: "${ELASTIC_USERNAME}"
-  password: "${ELASTIC_PASSWORD}"
+  host: "kibana:5601"
+  username: "elastic"
+  password: "HSLU-1234"
 
 
 
